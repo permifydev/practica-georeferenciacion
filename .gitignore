@@ -1,0 +1,25 @@
+# Entorno virtual
+venv/
+env/
+ENV/
+
+
+
+# Archivos temporales de Python
+__pycache__/
+*.py[cod]
+
+.env__pycache__/
+
+db.sqlite3
+staticfiles/
+*.pyc
+media/uploads/
+.env
+
+# Ignorar datos pesados
+mapa/data/
+*.gdb/
+*.xlsx
+
+

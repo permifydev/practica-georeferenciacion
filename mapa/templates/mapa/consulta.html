@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Consulta cartográfica</title>
+
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    >
+
+    <script
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+    </script>
+</head>
+
+<body>
+
+    <h1>Consulta cartográfica</h1>
+
+    <p>Usuario: {{ request.user.username }}</p>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <label>Dirección:</label>
+
+        <input
+            type="text"
+            name="direccion"
+            placeholder="Ej: Av. Nueva Providencia 1363"
+            required
+        >
+
+        <button type="submit">
+            Buscar
+        </button>
+
+    </form>
+
+
+    {% if resultado %}
+
+        <hr>
+
+        <h2>Resultado</h2>
+
+        <p>
+            <strong>Dirección:</strong>
+            {{ resultado.direccion }}
+        </p>
+
+        <p>
+            <strong>Latitud:</strong>
+            {{ resultado.lat }}
+        </p>
+
+        <p>
+            <strong>Longitud:</strong>
+            {{ resultado.lon }}
+        </p>
+
+        <p>
+            <strong>Código postal:</strong>
+            {{ resultado.codigo_postal }}
+        </p>
+
+
+        {% if resultado.manzana %}
+
+        <div 
+            style="display: flex; 
+            gap: 30px; 
+            align-items: flex-start;
+            margin-top: 20px;">
+
+    <!-- Información censal -->
+    <div style="width: 350px;">
+
+        <h2>Información censal</h2>
+
+        <p>
+            <strong>Región:</strong>
+            {{ resultado.manzana.props.REGION }}
+        </p>
+
+        <p>
+            <strong>Provincia:</strong>
+            {{ resultado.manzana.props.PROVINCIA }}
+        </p>
+
+        <p>
+            <strong>Comuna:</strong>
+            {{ resultado.manzana.props.COMUNA }}
+        </p>
+
+        <p>
+            <strong>Distrito:</strong>
+            {{ resultado.manzana.props.DISTRITO }}
+        </p>
+
+        <p>
+            <strong>Localidad:</strong>
+            {{ resultado.manzana.props.LOCALIDAD }}
+        </p>
+
+        <p>
+            <strong>Código de manzana:</strong>
+            {{ resultado.manzana.props.COD_MANZANA }}
+        </p>
+
+        <p>
+            <strong>Población de la manzana:</strong>
+            {{ resultado.manzana.props.n_per|floatformat:0 }}
+        </p>
+
+    </div>
+
+    <!-- Mapa -->
+    <div
+        id="map"
+        style="width: 800px; height: 330px;  margin-top: -30px;">
+    </div>
+
+</div>
+
+        {% endif %}
+
+
+        {% if resultado.manzana %}
+
+            <script>
+                const lat = {{ resultado.lat }};
+                const lon = {{ resultado.lon }};
+
+                const map = L.map("map").setView(
+                    [lat, lon],
+                    17
+                );
+
+                L.tileLayer(
+                    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                    {
+                        attribution: "&copy; OpenStreetMap contributors"
+                    }
+                ).addTo(map);
+
+                L.marker([lat, lon])
+                    .addTo(map)
+                    .bindPopup("Dirección consultada")
+                    .openPopup();
+
+                const manzana = {{ resultado.manzana_json|safe }};
+
+                const capaManzana = L.geoJSON(
+                    manzana
+                ).addTo(map);
+
+                map.fitBounds(
+                    capaManzana.getBounds()
+                );
+            </script>
+
+        {% endif %}
+
+    {% endif %}
+
+
+</body>
+</html>
