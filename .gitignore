@@ -19,6 +19,7 @@ staticfiles/
 
 # Archivos subidos
 media/uploads/
+import.txt
 
 # Datos pesados
 # Cartografía sin comprimir
