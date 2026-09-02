@@ -12,7 +12,7 @@ DATA_DIR = os.path.join(BASE_DIR, "data")
 
 MANZANAS_GDB = os.path.join(
     DATA_DIR,
-    "Cartografia_censo2024_Pais.gdb"
+    "Cartografía_censo2024_R13.gdb"
 )
 
 MANZANAS_LAYER = "Manzanas_CPV24"

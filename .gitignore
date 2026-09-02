@@ -3,23 +3,23 @@ venv/
 env/
 ENV/
 
-
+# Variables de entorno
+.env
 
 # Archivos temporales de Python
 __pycache__/
 *.py[cod]
-
-.env__pycache__/
-
-db.sqlite3
-staticfiles/
 *.pyc
+
+# Base de datos local
+db.sqlite3
+
+# Archivos estáticos generados
+staticfiles/
+
+# Archivos subidos
 media/uploads/
-.env
 
-# Ignorar datos pesados
-mapa/data/
-*.gdb/
-*.xlsx
-
-
+# Datos pesados
+# Cartografía sin comprimir
+mapa/data/*.gdb/

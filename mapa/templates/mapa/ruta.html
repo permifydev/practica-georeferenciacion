@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Calcular ruta</title>
+</head>
+
+<body>
+
+    <h1>Calcular ruta</h1>
+
+    <p>Usuario: {{ request.user.username }}</p>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <p>
+            <label>Dirección de origen:</label>
+            <input
+                type="text"
+                name="origen"
+                placeholder="Ej: Av. Nueva Providencia 1363"
+                required
+            >
+        </p>
+
+        <p>
+            <label>Dirección de destino:</label>
+            <input
+                type="text"
+                name="destino"
+                placeholder="Ej: Plaza de Armas Santiago"
+                required
+            >
+        </p>
+
+        <button type="submit">
+            Calcular ruta
+        </button>
+
+    </form>
+
+    {% if resultado %}
+
+        <hr>
+
+        <h2>Resultado de la ruta</h2>
+
+        <p>
+            <strong>Origen:</strong>
+            {{ resultado.origen }}
+        </p>
+
+        <p>
+            <strong>Destino:</strong>
+            {{ resultado.destino }}
+        </p>
+
+        <p>
+            <strong>Distancia:</strong>
+            {{ resultado.distancia }}
+        </p>
+
+        <p>
+            <strong>Tiempo en auto:</strong>
+            {{ resultado.auto }}
+        </p>
+
+        <p>
+            <strong>Tiempo caminando:</strong>
+            {{ resultado.caminando }}
+        </p>
+
+        <p>
+            <strong>Tiempo en bicicleta:</strong>
+            {{ resultado.bicicleta }}
+        </p>
+
+    {% endif %}
+
+
+    {% if error %}
+
+        <p>
+            <strong>Error:</strong>
+            {{ error }}
+        </p>
+
+    {% endif %}
+
+
+    <br>
+
+    <a href="/">Volver al inicio</a>
+
+</body>
+</html>
