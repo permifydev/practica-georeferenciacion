@@ -24,4 +24,4 @@ PY
 
 python manage.py collectstatic --noinput
 python manage.py migrate
-python manage.py createsuperuser --noinput || true
+python manage.py shell -c "from django.contrib.auth import get_user_model; User=get_user_model(); import os; username=os.getenv('DJANGO_SUPERUSER_USERNAME', 'admin'); email=os.getenv('DJANGO_SUPERUSER_EMAIL', ''); password=os.getenv('DJANGO_SUPERUSER_PASSWORD'); (User.objects.create_superuser(username=username, email=email, password=password) if password and not User.objects.filter(username=username).exists() else None)"
