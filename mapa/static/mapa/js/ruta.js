@@ -1,5 +1,6 @@
 const botones = document.querySelectorAll(".transporte");
 const tiempoTexto = document.getElementById("tiempo-texto");
+const botonGoogle = document.getElementById("boton-google");
 
 botones.forEach((boton) => {
     boton.addEventListener("click", () => {
@@ -13,11 +14,18 @@ botones.forEach((boton) => {
         const tiempo = boton.dataset.tiempo;
         const nombre = boton.dataset.nombre;
         const icono = boton.dataset.icono;
+        const modo = boton.dataset.modo;
 
         tiempoTexto.innerHTML = `
             <strong>${icono} ${nombre}</strong><br>
             ${tiempo}
         `;
+
+        if (botonGoogle) {
+            const url = new URL(botonGoogle.href);
+            url.searchParams.set("travelmode", modo);
+            botonGoogle.href = url.toString();
+        }
     });
 });
 

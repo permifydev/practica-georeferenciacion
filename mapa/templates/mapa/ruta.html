@@ -1,191 +1,250 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calcular ruta</title>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Calcular ruta</title>
 
-    <link rel="stylesheet" href="{% static 'mapa/css/ruta.css' %}">
-    <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    />
-    
-    
-</head>
+        <link rel="stylesheet" href="{% static 'mapa/css/ruta.css' %}">
+        <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        />
+        
+        
+    </head>
 
-<body>
+    <body>
 
-<div class="contenedor">
+        <div class="layout">
 
-    <div class="tarjeta">
+            <aside class="sidebar">
 
-        <h1>Calcular ruta</h1>
+                <h2>Menú</h2>
 
-        <p class="usuario">
-            Usuario: {{ request.user.username }}
-        </p>
+                <nav class="menu">
 
-        <form method="POST">
+                    <a href="/">
+                        🏠 Inicio
+                    </a>
 
-            {% csrf_token %}
+                    <a href="/mapa/">
+                        🗺 Consulta cartográfica
+                    </a>
 
-            <div class="grupo">
-                <label>Dirección de origen</label>
+                    <a href="/mapa/ruta/">
+                        📍 Calcular distancias
+                    </a>
 
-                <input
-                    type="text"
-                    name="origen"
-                    placeholder="Ej: Av. Nueva Providencia 1363"
-                    required
-                >
-            </div>
+                    <a href="/logout/">
+                        🚪 Cerrar sesión
+                    </a>
 
-            <div class="grupo">
-                <label>Dirección de destino</label>
+                </nav>
 
-                <input
-                    type="text"
-                    name="destino"
-                    placeholder="Ej: Plaza de Armas Santiago"
-                    required
-                >
-            </div>
+            </aside>
 
-            <button class="boton" type="submit">
-                Calcular ruta
-            </button>
+        
+            <main class="contenido">
+                
+                
+                <div class="contenedor">
 
-        </form>
+                    <div class="tarjeta">
 
-    </div>
+                        <h1>Calcular ruta</h1>
 
-    {% if resultado %}
+                        <p class="usuario">
+                            Usuario: {{ request.user.username }}
+                        </p>
 
-    <div class="tarjeta">
+                        <form method="POST">
+                            {% csrf_token %}
 
-        <h2>Resultado de la ruta</h2>
+                            <div class="form-ruta">
 
-        <div class="transportes">
+                                <div class="grupo">
+                                    <label>Dirección de origen</label>
+                                    <input
+                                        type="text"
+                                        name="origen"
+                                        placeholder="Ej: Av. Nueva Providencia 1363"
+                                        required
+                                    >
+                                </div>
 
-           
+                                <div class="grupo">
+                                    <label>Dirección de destino</label>
+                                    <input
+                                        type="text"
+                                        name="destino"
+                                        placeholder="Ej: Plaza de Armas Santiago"
+                                        required
+                                    >
+                                </div>
 
-            <button
-                class="transporte activo"
-                type="button"
-                data-tiempo="{{ resultado.auto }}"
-                data-nombre="Tiempo en auto"
-                data-icono="🚗"
-            >
-                🚗 Auto
-            </button>
+                            </div>
 
-            <button
-                class="transporte"
-                type="button"
-                data-tiempo="{{ resultado.caminando }}"
-                data-nombre="Tiempo caminando"
-                data-icono="🚶"
-            >
-                🚶 Caminando
-            </button>
+                            <button class="boton" type="submit">
+                                Calcular ruta
+                            </button>
+                        </form>
 
-            <button
-                class="transporte"
-                type="button"
-                data-tiempo="{{ resultado.bicicleta }}"
-                data-nombre="Tiempo en bicicleta"
-                data-icono="🚲"
-            >
-                🚲 Bicicleta
-            </button>
+                    </div>
+
+                    {% if resultado %}
+
+                    <div class="tarjeta">
+
+                        <div class="encabezado-resultado">
+                            <div>
+                                <span class="subtitulo-resultado">Ruta calculada</span>
+                                <h2>Resultado del recorrido</h2>
+                            </div>
+                        </div>
+
+
+                        <div class="transportes">
+
+                        
+
+                            <button
+                                class="transporte activo"
+                                type="button"
+                                data-tiempo="{{ resultado.auto }}"
+                                data-nombre="Tiempo en auto"
+                                data-icono="🚗"
+                                data-modo="driving"
+                            >
+                                🚗 Auto
+                            </button>
+
+                            <button
+                                class="transporte"
+                                type="button"
+                                data-tiempo="{{ resultado.caminando }}"
+                                data-nombre="Tiempo caminando"
+                                data-icono="🚶"
+                                data-modo="walking"
+                            >
+                                🚶 Caminando
+                            </button>
+
+                        <button
+                                class="transporte"
+                                type="button"
+                                data-tiempo="{{ resultado.bicicleta }}"
+                                data-nombre="Tiempo en bicicleta"
+                                data-icono="🚲"
+                                data-modo="bicycling"
+                            >
+                                🚲 Bicicleta
+                            </button>
+
+                            
+
+                        </div>
+
+                        <div class="direcciones-ruta">
+
+                            <div class="direccion-item">
+                                <span class="direccion-icono">A</span>
+
+                                <div>
+                                    <span class="direccion-titulo">Origen</span>
+                                    <p>{{ resultado.origen }}</p>
+                                </div>
+                            </div>
+
+                            <div class="direccion-linea"></div>
+
+                            <div class="direccion-item">
+                                <span class="direccion-icono destino">B</span>
+
+                                <div>
+                                    <span class="direccion-titulo">Destino</span>
+                                    <p>{{ resultado.destino }}</p>
+                                </div>
+                            </div>
+
+                        </div>
+                        
+
+                        
+                        <div class="seccion-mapa">
+
+                            {% if resultado.origen_lat and resultado.destino_lat %}
+                                <div
+                                    id="mapa-ruta"
+                                    data-origen-lat="{{ resultado.origen_lat }}"
+                                    data-origen-lon="{{ resultado.origen_lon }}"
+                                    data-destino-lat="{{ resultado.destino_lat }}"
+                                    data-destino-lon="{{ resultado.destino_lon }}"
+                                ></div>
+                            {% endif %}
+
+                            <div class="resumen-ruta">
+
+                            
+                                <div class="dato-ruta">
+                                    <span class="titulo-dato">📍 Distancia</span>
+                                    <span class="valor-dato">
+                                        {{ resultado.distancia }}
+                                    </span>
+                                </div>
+
+                                <div class="dato-ruta" id="tiempo-texto">
+                                    <span class="titulo-dato">🚗 Tiempo en auto</span>
+                                    <span class="valor-dato">
+                                        {{ resultado.auto }}
+                                    </span>
+                                </div>
+
+                                <a
+                                    id="boton-google"
+                                    href="https://www.google.com/maps/dir/?api=1&origin={{ resultado.origen|urlencode }}&destination={{ resultado.destino|urlencode }}"
+                                    class="boton-google"
+                                >
+                                    Ver ruta en Google Maps
+                                </a>
+
+                            </div>
+
+
+                        </div> 
+
+                    </div>
+
+                    
+
+                    {% endif %}
+
+                
+                    {% if error %} 
+                    
+                    <div class="error">
+                        <strong>Error:</strong>
+                        {{ error }}
+                    </div>
+
+                    {% endif %}
+
+                    <a class="volver" href="/">
+                        ← Volver al inicio
+                    </a>
+
+                </div>
+
+            </main>
 
             
 
         </div>
 
-       <div class="direcciones-ruta">
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <script src="{% static 'mapa/js/ruta.js' %}"></script>
 
-            <div class="direccion-item">
-                <span class="direccion-icono">A</span>
+    </body>
 
-                <div>
-                    <span class="direccion-titulo">Origen</span>
-                    <p>{{ resultado.origen }}</p>
-                </div>
-            </div>
-
-            <div class="direccion-linea"></div>
-
-            <div class="direccion-item">
-                <span class="direccion-icono destino">B</span>
-
-                <div>
-                    <span class="direccion-titulo">Destino</span>
-                    <p>{{ resultado.destino }}</p>
-                </div>
-            </div>
-
-        </div>
-        
-
-        
-        {% if resultado.origen_lat and resultado.destino_lat %}
-
-            <div
-                id="mapa-ruta"
-                data-origen-lat="{{ resultado.origen_lat }}"
-                data-origen-lon="{{ resultado.origen_lon }}"
-                data-destino-lat="{{ resultado.destino_lat }}"
-                data-destino-lon="{{ resultado.destino_lon }}"
-            ></div>
-            
-        {% endif %}
-
-      <div class="resumen-ruta">
-
-        <div class="dato-ruta">
-
-            <span class="titulo-dato">📍 Distancia</span>
-            <span class="valor-dato">
-                {{ resultado.distancia }}
-            </span>
-
-        </div>
-
-        <div class="dato-ruta" id="tiempo-texto">
-
-            <span class="titulo-dato">🚗 Tiempo en auto</span>
-            <span class="valor-dato">
-                {{ resultado.auto }}
-            </span>
-
-        </div>
-
-</div>
-
-    </div>
-
-    {% endif %}
-
-    {% if error %}
-
-    <div class="error">
-        <strong>Error:</strong>
-        {{ error }}
-    </div>
-
-    {% endif %}
-
-    <a class="volver" href="/">
-        ← Volver al inicio
-    </a>
-
-</div>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="{% static 'mapa/js/ruta.js' %}"></script>
-
-</body>
 </html>
