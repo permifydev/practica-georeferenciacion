@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
+
+
 from pathlib import Path
 import os
 from dotenv import load_dotenv
@@ -47,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'accounts',
     'mapa',
+    
 ]
 
 MIDDLEWARE = [

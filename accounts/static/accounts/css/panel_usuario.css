@@ -1,0 +1,106 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f4f6f8;
+    min-height: 100vh;
+}
+
+.panel-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.panel-card {
+    width: 100%;
+    max-width: 550px;
+    background-color: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.panel-card h1 {
+    font-size: 32px;
+    color: #222;
+    margin-bottom: 20px;
+}
+
+.bienvenida {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.descripcion {
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.panel-opciones {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.btn {
+    display: block;
+    width: 100%;
+    padding: 14px 20px;
+    background-color: #2563eb;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.btn:hover {
+    background-color: #1d4ed8;
+}
+
+.btn-logout {
+    background-color: #dc2626;
+}
+
+.btn-logout:hover {
+    background-color: #b91c1c;
+}
+
+/* RESPONSIVE PARA CELULAR */
+
+@media (max-width: 600px) {
+    .panel-container {
+        align-items: flex-start;
+        padding: 30px 15px;
+    }
+
+    .panel-card {
+        padding: 25px 20px;
+    }
+
+    .panel-card h1 {
+        font-size: 26px;
+    }
+
+    .bienvenida {
+        font-size: 16px;
+    }
+
+    .descripcion {
+        font-size: 14px;
+    }
+
+    .btn {
+        font-size: 15px;
+        padding: 13px 12px;
+    }
+}

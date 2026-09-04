@@ -1,15 +1,59 @@
-<h1>Panel Usuario</h1>
 
-<p>Bienvenido {{ request.user.username }}</p>
 
-<p>Aquí realizaremos la consulta cartográfica.</p>
 
-<a href="/mapa/consulta/">Ir a consulta cartográfica</a>
+{% load static %}
 
-<br><br>
+<!DOCTYPE html>
+<html lang="es">
 
-<a href="/mapa/ruta/">Calcular distancia entre dos direcciones</a>
+<head>
+    <meta charset="UTF-8">
 
-<br><br>
+    <!-- IMPORTANTE PARA QUE SEA RESPONSIVE EN CELULAR -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<a href="/logout/">Cerrar sesión</a>
+    <title>Panel Usuario</title>
+
+    <!-- CSS DEL PANEL -->
+    <link rel="stylesheet" href="{% static 'accounts/css/panel_usuario.css' %}">
+</head>
+
+<body>
+
+    <main class="panel-container">
+
+        <section class="panel-card">
+
+            <h1>Panel Usuario</h1>
+
+            <p class="bienvenida">
+                Bienvenido <strong>{{ request.user.username }}</strong>
+            </p>
+
+            <p class="descripcion">
+                Aquí realizaremos la consulta cartográfica.
+            </p>
+
+            <div class="panel-opciones">
+
+                <a href="/mapa/consulta/" class="btn">
+                    Ir a consulta cartográfica
+                </a>
+
+                <a href="/mapa/ruta/" class="btn">
+                    Calcular distancia entre dos direcciones
+                </a>
+
+                <a href="/logout/" class="btn btn-logout">
+                    Cerrar sesión
+                </a>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+
+</html>

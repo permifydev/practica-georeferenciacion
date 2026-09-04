@@ -73,6 +73,39 @@ def consulta_view(request):
             "resultado": resultado
         }
     )
+
+def obtener_coordenadas(direccion):
+
+    url = "https://nominatim.openstreetmap.org/search"
+
+    params = {
+        "q": direccion,
+        "format": "json",
+        "limit": 1,
+    }
+
+    headers = {
+        "User-Agent": "mapa_chile_app/1.0"
+    }
+
+    response = requests.get(
+        url,
+        params=params,
+        headers=headers,
+        timeout=10
+    )
+
+    datos = response.json()
+
+    if datos:
+        return {
+            "lat": datos[0]["lat"],
+            "lon": datos[0]["lon"],
+        }
+
+    return None
+
+
 @login_required
 def ruta_view(request):
 
@@ -142,6 +175,11 @@ def ruta_view(request):
 
         if origen_google and destino_google:
 
+            
+
+            coordenadas_origen = obtener_coordenadas(origen_google)
+            coordenadas_destino = obtener_coordenadas(destino_google)
+
             resultado = {
                 "origen": origen_google,
                 "destino": destino_google,
@@ -149,8 +187,14 @@ def ruta_view(request):
                 "auto": tiempos.get("auto"),
                 "caminando": tiempos.get("caminando"),
                 "bicicleta": tiempos.get("bicicleta"),
-            }
 
+                "origen_lat": coordenadas_origen["lat"] if coordenadas_origen else None,
+                "origen_lon": coordenadas_origen["lon"] if coordenadas_origen else None,
+
+                "destino_lat": coordenadas_destino["lat"] if coordenadas_destino else None,
+                "destino_lon": coordenadas_destino["lon"] if coordenadas_destino else None,
+            }
+            
         else:
             error = "No fue posible calcular la ruta."
 
