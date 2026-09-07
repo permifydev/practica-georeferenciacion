@@ -21,7 +21,10 @@
 
             <aside class="sidebar">
 
-                <h2>Menú</h2>
+                <div class="sidebar-header">
+                    <h2>Plataforma Cartográfica</h2>
+                    <span>Panel de navegación</span>
+                </div>
 
                 <nav class="menu">
 
@@ -33,15 +36,30 @@
                         🗺 Consulta cartográfica
                     </a>
 
-                    <a href="/mapa/ruta/">
+                    <a href="/mapa/ruta/" class="activo">
                         📍 Calcular distancias
                     </a>
 
-                    <a href="/logout/">
-                        🚪 Cerrar sesión
-                    </a>
-
                 </nav>
+
+                    <div class="sidebar-footer">
+
+                        <div class="usuario-sidebar">
+                            <div class="usuario-icono">
+                                👤
+                            </div>
+
+                            <div class="usuario-info">
+                                <span class="usuario-label">Usuario</span>
+                                <strong>{{ request.user.username }}</strong>
+                            </div>
+                        </div>
+
+                        <a href="/logout/" class="cerrar-sesion">
+                            Cerrar sesión
+                        </a>
+
+                    </div>
 
             </aside>
 
