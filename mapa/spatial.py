@@ -20,6 +20,8 @@ MANZANAS_LAYER = "Manzanas_CPV24"
 
 def buscar_manzana(lat, lng):
 
+    
+
     if lat is None or lng is None:
         return None
 
@@ -80,8 +82,8 @@ def buscar_manzana(lat, lng):
 
         props = feature["properties"]
 
-        print("PROPIEDADES DE LA MANZANA:")####
-        print(props)#########
+        print("PROPIEDADES DE LA MANZANA:")
+        print(props)
 
         print(
             "Manzana encontrada:",

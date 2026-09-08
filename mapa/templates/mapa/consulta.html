@@ -1,43 +1,52 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Consulta cartográfica</title>
+{% extends "mapa/base.html" %}
+{% load static %}
 
-    <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    >
+{% block title %}
+Consulta cartográfica
+{% endblock %}
 
-    <script
-        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
-    </script>
-</head>
+{% block extra_css %}
 
-<body>
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+>
+
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+<link
+    rel="stylesheet"
+    href="{% static 'mapa/css/consulta.css' %}"
+>
+
+{% endblock %}
+
+{% block contenido %}
 
     <h1>Consulta cartográfica</h1>
 
-    <p>Usuario: {{ request.user.username }}</p>
+    <p>Consulta una dirección para obtener su ubicación e información censal asociada.</p>
 
-    <form method="POST">
+        <form method="POST">
 
-        {% csrf_token %}
+            {% csrf_token %}
 
-        <label>Dirección:</label>
+            <label>Dirección:</label>
 
-        <input
-            type="text"
-            name="direccion"
-            placeholder="Ej: Av. Nueva Providencia 1363"
-            required
-        >
+            <input
+                type="text"
+                name="direccion"
+                placeholder="Ej: Av. Nueva Providencia 1363"
+                required
+            >
 
-        <button type="submit">
-            Buscar
-        </button>
+            <button type="submit">
+                Buscar
+            </button>
 
-    </form>
+        </form>
 
 
     {% if resultado %}
@@ -75,55 +84,187 @@
             align-items: flex-start;
             margin-top: 20px;">
 
-    <!-- Información censal -->
-    <div style="width: 350px;">
+        <!-- Información censal -->
+        <div style="width: 350px;">
 
         <h2>Información censal</h2>
 
-        <p>
-            <strong>Región:</strong>
-            {{ resultado.manzana.props.REGION }}
-        </p>
+        <h3>Ubicación</h3>
 
-        <p>
-            <strong>Provincia:</strong>
-            {{ resultado.manzana.props.PROVINCIA }}
-        </p>
+        {% for nombre, valor in resultado.datos_manzana.ubicacion.items %}
 
-        <p>
-            <strong>Comuna:</strong>
-            {{ resultado.manzana.props.COMUNA }}
-        </p>
+            <p>
+                <strong>{{ nombre }}:</strong>
+                {{ valor }}
+            </p>
 
-        <p>
-            <strong>Distrito:</strong>
-            {{ resultado.manzana.props.DISTRITO }}
-        </p>
+        {% endfor %}
 
-        <p>
-            <strong>Localidad:</strong>
-            {{ resultado.manzana.props.LOCALIDAD }}
-        </p>
+        <h3>Educación</h3>
 
-        <p>
-            <strong>Código de manzana:</strong>
-            {{ resultado.manzana.props.COD_MANZANA }}
-        </p>
+        {% for nombre, valor in resultado.datos_manzana.educacion.items %}
+            <p>
+                <strong>{{ nombre }}:</strong>
+                {{ valor|floatformat:0 }}
+            </p>
+        {% endfor %}
 
-        <p>
-            <strong>Población de la manzana:</strong>
-            {{ resultado.manzana.props.n_per|floatformat:0 }}
-        </p>
 
-    </div>
+        <h3>Población</h3>
 
-    <!-- Mapa -->
-    <div
-        id="map"
-        style="width: 800px; height: 330px;  margin-top: -20px;">
-    </div>
+        {% for nombre, valor in resultado.datos_manzana.poblacion.items %}
 
-</div>
+            <p>
+                <strong>{{ nombre }}:</strong>
+
+                {% if "Edad promedio" == nombre %}
+                    {{ valor|floatformat:1 }}
+                {% else %}
+                    {{ valor|floatformat:0 }}
+                {% endif %}
+            </p>
+
+        {% endfor %}  
+    
+        <h3>Trabajo</h3>
+
+        {% for nombre, valor in resultado.datos_manzana.trabajo.items %}
+
+            <p>
+                <strong>{{ nombre }}:</strong>
+                {{ valor|floatformat:0 }}
+            </p>
+
+
+        {% endfor %}
+
+        <h3>Transporte</h3>
+
+        {% for nombre, valor in resultado.datos_manzana.transporte.items %}
+            <p>
+                <strong>{{ nombre }}:</strong>
+                {{ valor|floatformat:0 }}
+            </p>
+        {% endfor %}
+
+        <h3>Hogares</h3>
+
+        {% for nombre, valor in resultado.datos_manzana.hogares.items %}
+            <p>
+                <strong>{{ nombre }}:</strong>
+
+                {% if "Promedio de personas por hogar" == nombre %}
+                    {{ valor|floatformat:1 }}
+                {% else %}
+                    {{ valor|floatformat:0 }}
+                {% endif %}
+            </p>
+        {% endfor %}
+
+        <h3>Vivienda</h3>
+
+        {% for nombre, valor in resultado.datos_manzana.vivienda.items %}
+            <p>
+                <strong>{{ nombre }}:</strong>
+                {{ valor|floatformat:0 }}
+            </p>
+        {% endfor %}
+
+        <h3>Tenencia de la vivienda</h3>
+
+        {% for nombre, valor in resultado.datos_manzana.tenencia.items %}
+            <p>
+                <strong>{{ nombre }}:</strong>
+                {{ valor|floatformat:0 }}
+            </p>
+        {% endfor %}
+
+        <h3>Dormitorios</h3>
+
+        {% for nombre, valor in resultado.datos_manzana.dormitorios.items %}
+            <p>
+                <strong>{{ nombre }}:</strong>
+                {{ valor|floatformat:0 }}
+            </p>
+        {% endfor %}
+
+        <h3>Tecnología e Internet</h3>
+
+        {% for nombre, valor in resultado.datos_manzana.tecnologia.items %}
+            <p>
+                <strong>{{ nombre }}:</strong>
+                {{ valor|floatformat:0 }}
+            </p>
+        {% endfor %}
+
+        <h3>Servicios básicos</h3>
+
+        {% for nombre, valor in resultado.datos_manzana.servicios_basicos.items %}
+            <p>
+                <strong>{{ nombre }}:</strong>
+                {{ valor|floatformat:0 }}
+            </p>
+        {% endfor %}   
+
+        <h3>Materialidad de la vivienda</h3>
+
+        {% for nombre, valor in resultado.datos_manzana.materialidad.items %}
+            <p>
+                <strong>{{ nombre }}:</strong>
+                {{ valor|floatformat:0 }}
+            </p>
+        {% endfor %}
+
+        <h3>Energía y combustibles</h3>
+
+        {% for nombre, valor in resultado.datos_manzana.energia.items %}
+            <p>
+                <strong>{{ nombre }}:</strong>
+                {{ valor|floatformat:0 }}
+            </p>
+        {% endfor %}
+
+        <h3>Características de la población</h3>
+
+        {% for nombre, valor in resultado.datos_manzana.caracteristicas_poblacion.items %}
+            <p>
+                <strong>{{ nombre }}:</strong>
+
+                {% if valor == None %}
+                    Sin información
+                {% else %}
+                    {{ valor|floatformat:0 }}
+                {% endif %}
+            </p>
+        {% endfor %}
+
+        <h3>Ocupaciones (CIUO)</h3>
+
+        {% for nombre, valor in resultado.datos_manzana.ocupaciones.items %}
+            <p>
+                <strong>{{ nombre }}:</strong>
+                {{ valor|floatformat:0 }}
+            </p>
+        {% endfor %}
+
+        <h3>Actividad económica (CAENES)</h3>
+
+        {% for nombre, valor in resultado.datos_manzana.actividad_economica.items %}
+            <p>
+                <strong>{{ nombre }}:</strong>
+                {{ valor|floatformat:0 }}
+            </p>
+        {% endfor %}
+
+        </div>
+
+            <!-- Mapa -->
+            <div
+                id="map"
+                style="width: 800px; height: 330px;  margin-top: -20px;">
+            </div>
+
+        </div>
 
         {% endif %}
 
@@ -166,6 +307,4 @@
 
     {% endif %}
 
-
-</body>
-</html>
+{% endblock %}

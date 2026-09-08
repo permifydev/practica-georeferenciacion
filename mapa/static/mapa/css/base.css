@@ -1,0 +1,158 @@
+/*panel de navegación*/
+
+.layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 240px;
+    min-width: 240px;
+    background-color: #1f2937;
+    color: white;
+    padding: 25px 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+.contenido {
+    flex: 1;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.menu a {
+    display: block;
+    padding: 12px;
+
+    color: white;
+    text-decoration: none;
+
+    border-radius: 8px;
+}
+
+.menu a:hover {
+    background-color: #374151;
+}
+
+.sidebar-header {
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #374151;
+}
+
+.sidebar-header h2 {
+    margin: 0 0 6px 0;
+    color: white;
+    font-size: 18px;
+}
+
+.sidebar-header span {
+    color: #9ca3af;
+    font-size: 13px;
+}
+
+.menu a.activo { /*activa el destaque del menu */
+    background-color: #2563eb;
+    color: white;
+}
+
+.menu a:hover { /*destaca al pasar el maouse */
+    background-color: #374151;
+}
+
+/*cerrar sesión manu laterar */
+
+.cerrar-sesion {
+    display: block;
+
+    margin-top: auto;
+    padding: 12px 14px;
+
+    color: white;
+    text-decoration: none;
+
+    border-radius: 8px;
+    font-size: 25px;
+}
+
+.cerrar-sesion:hover {
+    background-color: #374151;
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid #374151;
+}
+
+.usuario-sidebar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-bottom: 12px;
+    padding: 10px;
+}
+.usuario-icono {
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: #374151;
+    border-radius: 50%;
+
+    flex-shrink: 0;
+}
+
+.usuario-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.usuario-label {
+    color: #9ca3af;
+    font-size: 12px;
+}
+
+.usuario-info strong {
+    color: white;
+    font-size: 14px;
+}
+
+/*menu laterar responsive */
+
+@media (max-width: 768px) {
+
+    .layout {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        min-width: 100%;
+        min-height: auto;
+    }
+
+    .menu {
+        gap: 6px;
+    }
+
+    .sidebar-footer {
+        margin-top: 20px;
+    }
+
+    .contenido {
+        width: 100%;
+    }
+
+}

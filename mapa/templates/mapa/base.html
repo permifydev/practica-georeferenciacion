@@ -1,0 +1,93 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+
+    <title>
+        {% block title %}
+        Plataforma Cartográfica
+        {% endblock %}
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'mapa/css/base.css' %}"
+    >
+
+    {% block extra_css %}
+    {% endblock %}
+</head>
+
+<body>
+
+    <div class="layout">
+
+        <aside class="sidebar">
+
+            <div class="sidebar-header">
+                <h2>Plataforma Cartográfica</h2>
+                <span>Panel de navegación</span>
+            </div>
+
+            <nav class="menu">
+                <a href="/">🏠 Inicio</a>
+
+                <a href="/mapa/">
+                    🗺 Consulta cartográfica
+                </a>
+
+                <a href="/mapa/ruta/">
+                    📍 Calcular distancias
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+
+                <div class="usuario-sidebar">
+
+                    <div class="usuario-icono">
+                        👤
+                    </div>
+
+                    <div class="usuario-info">
+                        <span class="usuario-label">
+                            Usuario
+                        </span>
+
+                        <strong>
+                            {{ request.user.username }}
+                        </strong>
+                    </div>
+
+                </div>
+
+                <a href="/logout/" class="cerrar-sesion">
+                    🚪 Cerrar sesión
+                </a>
+
+            </div>
+
+        </aside>
+
+        <main class="contenido">
+
+            <div class="contenedor">
+
+                {% block contenido %}
+                {% endblock %}
+
+            </div>
+
+        </main>
+
+    </div>
+
+    {% block extra_js %}
+    {% endblock %}
+
+</body>
+
+</html>
