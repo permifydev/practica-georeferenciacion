@@ -86,6 +86,7 @@ Calcular ruta
                                 class="transporte activo"
                                 type="button"
                                 data-tiempo="{{ resultado.auto }}"
+                                data-distancia="{{ resultado.distancia_auto }}"
                                 data-nombre="Tiempo en auto"
                                 data-icono="🚗"
                                 data-modo="driving"
@@ -97,6 +98,7 @@ Calcular ruta
                                 class="transporte"
                                 type="button"
                                 data-tiempo="{{ resultado.caminando }}"
+                                data-distancia="{{ resultado.distancia_caminando }}"
                                 data-nombre="Tiempo caminando"
                                 data-icono="🚶"
                                 data-modo="walking"
@@ -108,6 +110,7 @@ Calcular ruta
                                 class="transporte"
                                 type="button"
                                 data-tiempo="{{ resultado.bicicleta }}"
+                                data-distancia="{{ resultado.distancia_bicicleta }}"
                                 data-nombre="Tiempo en bicicleta"
                                 data-icono="🚲"
                                 data-modo="bicycling"
@@ -160,15 +163,21 @@ Calcular ruta
                             <div class="resumen-ruta">
 
                             
-                                <div class="dato-ruta">
-                                    <span class="titulo-dato">📍 Distancia</span>
+                                <div class="dato-ruta" id="distancia-texto">
+                                    <span class="titulo-dato">
+                                        📍 Distancia
+                                    </span>
+
                                     <span class="valor-dato">
-                                        {{ resultado.distancia }}
+                                        {{ resultado.distancia_auto }}
                                     </span>
                                 </div>
 
                                 <div class="dato-ruta" id="tiempo-texto">
-                                    <span class="titulo-dato">🚗 Tiempo en auto</span>
+                                    <span class="titulo-dato">
+                                        🚗 Tiempo en auto
+                                    </span>
+                                    
                                     <span class="valor-dato">
                                         {{ resultado.auto }}
                                     </span>

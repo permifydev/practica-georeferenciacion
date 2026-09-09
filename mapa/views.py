@@ -485,7 +485,7 @@ def ruta_view(request):
         }
 
         tiempos = {}
-        distancia = None
+        distancias = {}
         origen_google = None
         destino_google = None
 
@@ -515,10 +515,8 @@ def ruta_view(request):
 
                 if elemento.get("status") == "OK":
 
-                    tiempos[nombre] = elemento["duration"]["text"]
-
-                    if distancia is None:
-                        distancia = elemento["distance"]["text"]
+                    tiempos[nombre] = elemento["duration"]["text"]                   
+                    distancias[nombre] = elemento["distance"]["text"]          ##########################################################
 
                     if origen_google is None:
                         origen_google = datos["origin_addresses"][0]
@@ -542,7 +540,9 @@ def ruta_view(request):
             resultado = {
                 "origen": origen_google,
                 "destino": destino_google,
-                "distancia": distancia,
+                "distancia_auto": distancias.get("auto"),
+                "distancia_caminando": distancias.get("caminando"),
+                "distancia_bicicleta": distancias.get("bicicleta"),
                 "auto": tiempos.get("auto"),
                 "caminando": tiempos.get("caminando"),
                 "bicicleta": tiempos.get("bicicleta"),

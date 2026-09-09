@@ -45,14 +45,18 @@
                     href="/mapa/"
                     class="{% if request.path == '/mapa/' %}activo{% endif %}"
                 >
-                    🗺 Consulta cartográfica
+                    Consulta cartográfica
                 </a>
 
                 <a
                     href="/mapa/ruta/"
                     class="{% if request.path == '/mapa/ruta/' %}activo{% endif %}"
                 >
-                    📍 Calcular distancias
+                    Calcular distancias
+                </a>
+
+                <a href="/cesfam/" class="{% if request.path == '/cesfam/' %}activo{% endif %}">
+                    Búsqueda de CESFAM
                 </a>
 
             </nav>

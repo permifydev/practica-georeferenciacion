@@ -1,6 +1,7 @@
 const botones = document.querySelectorAll(".transporte");
 const tiempoTexto = document.getElementById("tiempo-texto");
 const botonGoogle = document.getElementById("boton-google");
+const distanciaTexto = document.getElementById("distancia-texto");
 
 botones.forEach((boton) => {
     boton.addEventListener("click", () => {
@@ -12,18 +13,35 @@ botones.forEach((boton) => {
         boton.classList.add("activo");
 
         const tiempo = boton.dataset.tiempo;
+        const distancia = boton.dataset.distancia;
         const nombre = boton.dataset.nombre;
         const icono = boton.dataset.icono;
         const modo = boton.dataset.modo;
 
         tiempoTexto.innerHTML = `
-            <strong>${icono} ${nombre}</strong><br>
-            ${tiempo}
+           <span class="titulo-dato">
+                ${icono} ${nombre}
+            </span>
+
+            <span class="valor-dato">
+                ${tiempo}
+            </span>
+        `;
+
+         distanciaTexto.innerHTML = `
+            <span class="titulo-dato">
+                📍 Distancia
+            </span>
+
+            <span class="valor-dato">
+                ${distancia}
+            </span>
         `;
 
         if (botonGoogle) {
             const url = new URL(botonGoogle.href);
             url.searchParams.set("travelmode", modo);
+            
             botonGoogle.href = url.toString();
         }
     });

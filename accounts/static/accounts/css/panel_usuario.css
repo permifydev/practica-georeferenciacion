@@ -6,8 +6,13 @@
 
 body {
     font-family: Arial, Helvetica, sans-serif;
-    background-color: #f4f6f8;
+    background: linear-gradient(
+        135deg,
+        #eef2f7,
+        #f8fafc
+    );
     min-height: 100vh;
+    color: #1f2937;
 }
 
 .panel-container {
@@ -15,80 +20,130 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
+    padding: 30px 20px;
 }
 
 .panel-card {
     width: 100%;
-    max-width: 550px;
+    max-width: 620px;
     background-color: white;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    padding: 45px 40px;
+    border-radius: 18px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.10);
     text-align: center;
+    border: 1px solid #e5e7eb;
 }
 
 .panel-card h1 {
-    font-size: 32px;
-    color: #222;
-    margin-bottom: 20px;
+    font-size: 34px;
+    color: #111827;
+    margin-bottom: 14px;
 }
 
 .bienvenida {
     font-size: 18px;
-    margin-bottom: 10px;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+.bienvenida strong {
+    color: #2563eb;
 }
 
 .descripcion {
-    color: #666;
-    margin-bottom: 30px;
+    color: #6b7280;
+    font-size: 15px;
+    line-height: 1.5;
+    margin-bottom: 32px;
 }
 
 .panel-opciones {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 14px;
 }
 
 .btn {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     width: 100%;
+    min-height: 52px;
+
     padding: 14px 20px;
+
     background-color: #2563eb;
     color: white;
+
     text-decoration: none;
-    border-radius: 8px;
+
+    border-radius: 10px;
+
     font-size: 16px;
     font-weight: bold;
-    transition: 0.2s;
+
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 .btn:hover {
     background-color: #1d4ed8;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(37, 99, 235, 0.25);
+}
+
+.btn:active {
+    transform: translateY(0);
 }
 
 .btn-logout {
     background-color: #dc2626;
+    margin-top: 8px;
 }
 
 .btn-logout:hover {
     background-color: #b91c1c;
+    box-shadow: 0 6px 14px rgba(220, 38, 38, 0.22);
 }
 
-/* RESPONSIVE PARA CELULAR */
+/* TABLET */
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
+
     .panel-container {
-        align-items: flex-start;
-        padding: 30px 15px;
+        padding: 25px 18px;
     }
 
     .panel-card {
-        padding: 25px 20px;
+        max-width: 560px;
+        padding: 38px 30px;
     }
 
     .panel-card h1 {
-        font-size: 26px;
+        font-size: 30px;
+    }
+}
+
+
+/* CELULAR */
+
+@media (max-width: 600px) {
+
+    .panel-container {
+        align-items: flex-start;
+        padding: 25px 14px;
+    }
+
+    .panel-card {
+        padding: 28px 18px;
+        border-radius: 14px;
+    }
+
+    .panel-card h1 {
+        font-size: 27px;
     }
 
     .bienvenida {
@@ -97,9 +152,11 @@ body {
 
     .descripcion {
         font-size: 14px;
+        margin-bottom: 25px;
     }
 
     .btn {
+        min-height: 50px;
         font-size: 15px;
         padding: 13px 12px;
     }
