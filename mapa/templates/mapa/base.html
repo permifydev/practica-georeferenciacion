@@ -33,15 +33,28 @@
             </div>
 
             <nav class="menu">
-                <a href="/">🏠 Inicio</a>
 
-                <a href="/mapa/">
+                <a
+                    href="/"
+                    class="{% if request.path == '/' %}activo{% endif %}"
+                >
+                    🏠 Inicio
+                </a>
+
+                <a
+                    href="/mapa/"
+                    class="{% if request.path == '/mapa/' %}activo{% endif %}"
+                >
                     🗺 Consulta cartográfica
                 </a>
 
-                <a href="/mapa/ruta/">
+                <a
+                    href="/mapa/ruta/"
+                    class="{% if request.path == '/mapa/ruta/' %}activo{% endif %}"
+                >
                     📍 Calcular distancias
                 </a>
+
             </nav>
 
             <div class="sidebar-footer">
@@ -65,7 +78,7 @@
                 </div>
 
                 <a href="/logout/" class="cerrar-sesion">
-                    🚪 Cerrar sesión
+                    Cerrar sesión
                 </a>
 
             </div>

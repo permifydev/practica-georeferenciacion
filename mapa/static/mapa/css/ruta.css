@@ -1,26 +1,7 @@
-
-body {
-    margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
-    background-color: #f3f4f6;
-    color: #1f2937;
-}
-
-h1,
-h2 {
-    color: #111827;
-}
-
-h1 {
-    margin-top: 0;
-    margin-bottom: 10px;
-}
-
 .usuario {
     color: #e91313;
     margin-bottom: 20px;
 }
-
 /****transporte *****/
 
 .transportes {
@@ -76,22 +57,9 @@ h1 {
         border-bottom: none;
     }
 
-    .contenedor {
-    width: 94%;
-    margin: 15px auto;
-    }
+    
 
-    .tarjeta {
-        padding: 15px;
-    }
-
-    .grupo input {
-        font-size: 16px;
-    }
-
-    .boton {
-        width: 100%;
-    }
+   
 
     .resumen-ruta {
     grid-template-columns: 1fr;
@@ -140,60 +108,7 @@ h1 {
     border-radius: 10px;
  }
 
-    /* formulario */
-
-    .contenedor {
-    width: 90%;
-    max-width: 1100px;
-    margin: 30px auto;
-}
-
-.tarjeta {
-    background-color: white;
-    padding: 25px;
-    margin-bottom: 25px;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-}
-
-.grupo {
-    margin-bottom: 18px;
-}
-
-.grupo label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: bold;
-}
-
-.grupo input {
-    width: 100%;
-    padding: 12px;
-    box-sizing: border-box;
-    border: 1px solid #cccccc;
-    border-radius: 7px;
-    font-size: 16px;
-}
-
-.grupo input:focus {
-    outline: none;
-    border-color: #2563eb;
-}
-
-.boton {
-    padding: 12px 20px;
-    border: none;
-    border-radius: 7px;
-    background-color: #2563eb;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.boton:hover {
-    background-color: #1d4ed8;
-}
+  
 /*ruta*/
 
 .resumen-ruta {
@@ -354,161 +269,3 @@ h1 {
     background-color: #1f2937;
 }
 
-/*panel de navegación*/
-
-.layout {
-    display: flex;
-    min-height: 100vh;
-}
-
-.sidebar {
-    width: 240px;
-    min-width: 240px;
-    background-color: #1f2937;
-    color: white;
-    padding: 25px 20px;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-}
-
-.contenido {
-    flex: 1;
-}
-
-.menu {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.menu a {
-    display: block;
-    padding: 12px;
-
-    color: white;
-    text-decoration: none;
-
-    border-radius: 8px;
-}
-
-.menu a:hover {
-    background-color: #374151;
-}
-
-.sidebar-header {
-    padding-bottom: 20px;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #374151;
-}
-
-.sidebar-header h2 {
-    margin: 0 0 6px 0;
-    color: white;
-    font-size: 18px;
-}
-
-.sidebar-header span {
-    color: #9ca3af;
-    font-size: 13px;
-}
-
-.menu a.activo { /*activa el destaque del menu */
-    background-color: #2563eb;
-    color: white;
-}
-
-.menu a:hover { /*destaca al pasar el maouse */
-    background-color: #374151;
-}
-
-/*cerrar sesión manu laterar */
-
-.cerrar-sesion {
-    display: block;
-
-    margin-top: auto;
-    padding: 12px 14px;
-
-    color: white;
-    text-decoration: none;
-
-    border-radius: 8px;
-    font-size: 25px;
-}
-
-.cerrar-sesion:hover {
-    background-color: #374151;
-}
-
-.sidebar-footer {
-    margin-top: auto;
-    padding-top: 20px;
-    border-top: 1px solid #374151;
-}
-
-.usuario-sidebar {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-
-    margin-bottom: 12px;
-    padding: 10px;
-}
-.usuario-icono {
-    width: 36px;
-    height: 36px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background-color: #374151;
-    border-radius: 50%;
-
-    flex-shrink: 0;
-}
-
-.usuario-info {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-}
-
-.usuario-label {
-    color: #9ca3af;
-    font-size: 12px;
-}
-
-.usuario-info strong {
-    color: white;
-    font-size: 14px;
-}
-
-/*menu laterar responsive */
-
-@media (max-width: 768px) {
-
-    .layout {
-        flex-direction: column;
-    }
-
-    .sidebar {
-        width: 100%;
-        min-width: 100%;
-        min-height: auto;
-    }
-
-    .menu {
-        gap: 6px;
-    }
-
-    .sidebar-footer {
-        margin-top: 20px;
-    }
-
-    .contenido {
-        width: 100%;
-    }
-
-}

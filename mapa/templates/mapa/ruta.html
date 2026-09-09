@@ -1,73 +1,28 @@
+{% extends "mapa/base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Calcular ruta</title>
 
-        <link rel="stylesheet" href="{% static 'mapa/css/ruta.css' %}">
-        <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        />
-        
-        
-    </head>
+{% block title %}
+Calcular ruta
+{% endblock %}
 
-    <body>
+{% block extra_css %}
 
-        <div class="layout">
+<link
+    rel="stylesheet"
+    href="{% static 'mapa/css/ruta.css' %}"
+>
 
-            <aside class="sidebar">
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
 
-                <div class="sidebar-header">
-                    <h2>Plataforma Cartográfica</h2>
-                    <span>Panel de navegación</span>
-                </div>
+{% endblock %}
 
-                <nav class="menu">
-
-                    <a href="/">
-                        🏠 Inicio
-                    </a>
-
-                    <a href="/mapa/">
-                        🗺 Consulta cartográfica
-                    </a>
-
-                    <a href="/mapa/ruta/" class="activo">
-                        📍 Calcular distancias
-                    </a>
-
-                </nav>
-
-                    <div class="sidebar-footer">
-
-                        <div class="usuario-sidebar">
-                            <div class="usuario-icono">
-                                👤
-                            </div>
-
-                            <div class="usuario-info">
-                                <span class="usuario-label">Usuario</span>
-                                <strong>{{ request.user.username }}</strong>
-                            </div>
-                        </div>
-
-                        <a href="/logout/" class="cerrar-sesion">
-                            Cerrar sesión
-                        </a>
-
-                    </div>
-
-            </aside>
-
-        
-            <main class="contenido">
+{% block contenido %}
                 
                 
-                <div class="contenedor">
+           
 
                     <div class="tarjeta">
 
@@ -252,17 +207,16 @@
                         ← Volver al inicio
                     </a>
 
-                </div>
+{% endblock %}
 
-            </main>
+{% block extra_js %}
 
-            
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
 
-        </div>
+<script
+    src="{% static 'mapa/js/ruta.js' %}">
+</script>
 
-        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-        <script src="{% static 'mapa/js/ruta.js' %}"></script>
-
-    </body>
-
-</html>
+{% endblock %}
