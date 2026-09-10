@@ -1,8 +1,28 @@
 {% extends "mapa/base.html" %}
+{% load static %}
+
+
 
 {% block title %}
 Búsqueda de CESFAM
 {% endblock %}
+
+
+{% block extra_css %}
+
+<link
+    rel="stylesheet"
+    href="{% static 'cesfam/css/cesfam.css' %}"
+>
+
+
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+{% endblock %}
+
 
 {% block contenido %}
 
@@ -11,9 +31,126 @@ Búsqueda de CESFAM
     <h1>Búsqueda de CESFAM</h1>
 
     <p>
-        En esta sección se desarrollará la búsqueda de CESFAM.
+        Ingresa una dirección para encontrar los CESFAM más cercanos.
     </p>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <div class="grupo">
+            <label for="direccion">
+                Dirección
+            </label>
+
+            <input
+                type="text"
+                id="direccion"
+                name="direccion"
+                placeholder="Ej: Av. Nueva Providencia 1363"
+                required
+            >
+        </div>
+
+        <button
+            type="submit"
+            class="boton"
+        >
+            Buscar CESFAM
+        </button>
+
+    </form>
 
 </div>
 
+
+<div class="tarjeta">
+
+    <h2>CESFAM más cercanos</h2>
+
+    <div class="lista-cesfam">
+
+        <div class="cesfam-item">
+
+            <div class="cesfam-numero">
+                1
+            </div>
+
+            <div class="cesfam-info">
+                <h3>CESFAM</h3>
+                <p>Dirección</p>
+                <p>Distancia</p>
+            </div>
+
+        </div>
+
+
+        <div class="cesfam-item">
+
+            <div class="cesfam-numero">
+                2
+            </div>
+
+            <div class="cesfam-info">
+                <h3>CESFAM</h3>
+                <p>Dirección</p>
+                <p>Distancia</p>
+            </div>
+
+        </div>
+
+
+        <div class="cesfam-item">
+
+            <div class="cesfam-numero">
+                3
+            </div>
+
+            <div class="cesfam-info">
+                <h3>CESFAM</h3>
+                <p>Dirección</p>
+                <p>Distancia</p>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="tarjeta">
+
+    <h2>Mapa de ubicación</h2>
+
+    <div id="mapa-cesfam">
+    </div>
+
+</div>
+
+
 {% endblock %}
+
+{% block extra_js %}
+
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+<script>
+    const mapa = L.map("mapa-cesfam").setView(
+        [-33.4489, -70.6693],
+        12
+    );
+
+    L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+            attribution: "&copy; OpenStreetMap contributors"
+        }
+    ).addTo(mapa);
+</script>
+
+{% endblock %}
+
+

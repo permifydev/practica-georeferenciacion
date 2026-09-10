@@ -1,0 +1,71 @@
+.lista-cesfam {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.cesfam-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    padding: 16px;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+
+    background-color: #f9fafb;
+}
+
+.cesfam-numero {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background-color: #2563eb;
+    color: white;
+
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.cesfam-info h3 {
+    margin: 0 0 6px 0;
+    font-size: 17px;
+}
+
+.cesfam-info p {
+    margin: 3px 0;
+    color: #4b5563;
+}
+
+#mapa-cesfam {
+    width: 100%;
+    height: 420px;
+    min-height: 420px;
+
+    margin-top: 18px;
+
+    border-radius: 10px;
+
+    background-color: #e5e7eb;
+
+    overflow: hidden;
+}
+
+@media (max-width: 768px) {
+
+    .cesfam-item {
+        align-items: flex-start;
+    }
+
+      #mapa-cesfam {
+        height: 320px;
+        min-height: 320px;
+    }
+}

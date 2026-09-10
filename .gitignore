@@ -20,7 +20,9 @@ staticfiles/
 # Archivos subidos
 media/uploads/
 import.txt
+ver_geojson.py
 
 # Datos pesados
 # Cartografía sin comprimir
 mapa/data/*.gdb/
+l_1067_v1_establecimientos_de_salud_junio_2026.geojson

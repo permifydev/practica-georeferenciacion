@@ -150,16 +150,6 @@ Calcular ruta
                         
                         <div class="seccion-mapa">
 
-                            {% if resultado.origen_lat and resultado.destino_lat %}
-                                <div
-                                    id="mapa-ruta"
-                                    data-origen-lat="{{ resultado.origen_lat }}"
-                                    data-origen-lon="{{ resultado.origen_lon }}"
-                                    data-destino-lat="{{ resultado.destino_lat }}"
-                                    data-destino-lon="{{ resultado.destino_lon }}"
-                                ></div>
-                            {% endif %}
-
                             <div class="resumen-ruta">
 
                             
@@ -183,6 +173,21 @@ Calcular ruta
                                     </span>
                                 </div>
 
+                               
+                            </div>
+
+                            {% if resultado.origen_lat and resultado.destino_lat %}
+                                <div
+                                    id="mapa-ruta"
+                                    data-origen-lat="{{ resultado.origen_lat }}"
+                                    data-origen-lon="{{ resultado.origen_lon }}"
+                                    data-destino-lat="{{ resultado.destino_lat }}"
+                                    data-destino-lon="{{ resultado.destino_lon }}"
+                                ></div>
+                            {% endif %}
+
+                            <div class="resumen-ruta">
+                          
                                 <a
                                     id="boton-google"
                                     href="https://www.google.com/maps/dir/?api=1&origin={{ resultado.origen|urlencode }}&destination={{ resultado.destino|urlencode }}"
