@@ -69,3 +69,28 @@
         min-height: 320px;
     }
 }
+
+/*MARCADORES DEL MAPA */
+
+.marcador-usuario,
+.marcador-cesfam {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: white;
+    font-weight: bold;
+    font-size: 15px;
+    border: 3px solid white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.marcador-usuario {
+    background-color: #111827;
+}
+
+.marcador-cesfam {
+    background-color: #2563eb;
+}

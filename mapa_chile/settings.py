@@ -145,3 +145,5 @@ MAILERS = {
 # Con eso, cuando alguien intente entrar a: http://127.0.0.1:8000/
 # sin haber iniciado sesión, Django lo enviará correctamente a: http://127.0.0.1:8000/login/?next=/
 LOGIN_URL = "/login/"
+
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"

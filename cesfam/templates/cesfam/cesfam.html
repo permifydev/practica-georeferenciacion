@@ -2,7 +2,6 @@
 {% load static %}
 
 
-
 {% block title %}
 Búsqueda de CESFAM
 {% endblock %}
@@ -14,7 +13,6 @@ Búsqueda de CESFAM
     rel="stylesheet"
     href="{% static 'cesfam/css/cesfam.css' %}"
 >
-
 
 <link
     rel="stylesheet"
@@ -39,6 +37,7 @@ Búsqueda de CESFAM
         {% csrf_token %}
 
         <div class="grupo">
+
             <label for="direccion">
                 Dirección
             </label>
@@ -47,9 +46,11 @@ Búsqueda de CESFAM
                 type="text"
                 id="direccion"
                 name="direccion"
+                value="{{ direccion }}"
                 placeholder="Ej: Av. Nueva Providencia 1363"
                 required
             >
+
         </div>
 
         <button
@@ -64,59 +65,116 @@ Búsqueda de CESFAM
 </div>
 
 
+
+{% if ubicacion_usuario %}
+
+<div class="tarjeta">
+
+    <h2>Ubicación encontrada</h2>
+
+    <p>
+        Latitud:
+        {{ ubicacion_usuario.latitud }}
+    </p>
+
+    <p>
+        Longitud:
+        {{ ubicacion_usuario.longitud }}
+    </p>
+
+</div>
+
+{% endif %}
+
+
+{% if error %}
+
+<div class="tarjeta">
+
+    <p>
+        {{ error }}
+    </p>
+
+</div>
+
+{% endif %}
+
+
+{% if cesfam_cercanos %}
+
 <div class="tarjeta">
 
     <h2>CESFAM más cercanos</h2>
 
     <div class="lista-cesfam">
 
-        <div class="cesfam-item">
+        {% for cesfam in cesfam_cercanos %}
+
+        <div
+            class="cesfam-item"
+            data-latitud="{{ cesfam.latitud }}"
+            data-longitud="{{ cesfam.longitud }}"
+            data-nombre="{{ cesfam.nombre|escapejs }}"
+        >
 
             <div class="cesfam-numero">
-                1
+                {{ forloop.counter }}
             </div>
 
             <div class="cesfam-info">
-                <h3>CESFAM</h3>
-                <p>Dirección</p>
-                <p>Distancia</p>
+
+                <h3>
+                    {{ cesfam.nombre }}
+                </h3>
+
+                <p>
+                    {{ cesfam.via }}
+                    {{ cesfam.direccion }}
+                    {{ cesfam.numero }}
+                </p>
+
+                <p>
+                    Comuna:
+                    {{ cesfam.comuna }}
+                </p>
+
+                <p>
+                    Teléfono:
+                    {{ cesfam.fono|default:"Sin información" }}
+                </p>
+
+                <p>
+                    Distancia:
+                    {{ cesfam.distancia }} km
+                    <button
+                        type="button"
+                        class="boton seleccionar-cesfam"
+                    >
+                        Seleccionar CESFAM
+                    </button>
+                </p>
+
             </div>
 
         </div>
 
-
-        <div class="cesfam-item">
-
-            <div class="cesfam-numero">
-                2
-            </div>
-
-            <div class="cesfam-info">
-                <h3>CESFAM</h3>
-                <p>Dirección</p>
-                <p>Distancia</p>
-            </div>
-
-        </div>
-
-
-        <div class="cesfam-item">
-
-            <div class="cesfam-numero">
-                3
-            </div>
-
-            <div class="cesfam-info">
-                <h3>CESFAM</h3>
-                <p>Dirección</p>
-                <p>Distancia</p>
-            </div>
-
-        </div>
+        {% endfor %}
 
     </div>
 
 </div>
+
+{% endif %}
+
+<a
+    id="boton-google-cesfam"
+    class="boton"
+    href="#"
+    target="_blank"
+    style="display: none;"
+>
+    Ir a Google Maps
+</a>
 
 
 <div class="tarjeta">
@@ -128,8 +186,8 @@ Búsqueda de CESFAM
 
 </div>
 
-
 {% endblock %}
+
 
 {% block extra_js %}
 
@@ -137,20 +195,212 @@ Búsqueda de CESFAM
     src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
 </script>
 
+
 <script>
+
     const mapa = L.map("mapa-cesfam").setView(
         [-33.4489, -70.6693],
-        12
+        11
     );
 
-    L.tileLayer(
-        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        {
-            attribution: "&copy; OpenStreetMap contributors"
-        }
+
+   L.tileLayer(
+    "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+    {
+        attribution: "&copy; OpenStreetMap contributors",
+        maxZoom: 19
+    }
     ).addTo(mapa);
+
+
+    const datosCesfam = JSON.parse(
+        "{{ cesfam_geojson|escapejs }}"
+    );
+
+    const cesfamCercanos = JSON.parse(
+    "{{ cesfam_cercanos_json|escapejs }}"
+    );
+// MARCADOR DEL USUARIO EN EL MAPA ***********************************************
+   const iconoUsuario = L.icon({
+        iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
+        shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
+
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+    });
+
+
+    const capaCesfam = L.geoJSON(
+    datosCesfam,
+    {
+        pointToLayer: function(feature, latlng) {
+            return L.marker(latlng);
+        },
+
+        onEachFeature: function(feature, layer) {
+
+            const datos = feature.properties;
+
+            const direccion =
+                `${datos.via || ""} ${datos.direccion || ""} ${datos.numero || ""}`;
+
+            layer.bindPopup(`
+                <strong>${datos.nombre}</strong>
+                <br>
+                ${direccion}
+                <br>
+                Comuna: ${datos.nom_comuna || "Sin información"}
+                <br>
+                Teléfono: ${datos.fono || "Sin información"}
+            `);
+        }
+    }
+);
+
+{% if not ubicacion_usuario %}
+capaCesfam.addTo(mapa);
+{% endif %}
+
+
+{% if ubicacion_usuario %}
+
+const ubicacionUsuario = [
+    {{ ubicacion_usuario.latitud }},
+    {{ ubicacion_usuario.longitud }}
+];
+
+const marcadorUsuario = L.marker(
+    ubicacionUsuario,
+    {
+        icon: iconoUsuario
+    }
+).addTo(mapa);
+
+marcadorUsuario.bindPopup(
+    "<strong>Tu ubicación</strong><br>{{ direccion|escapejs }}"
+);
+
+{% endif %}
+
+
+    // MARCADORES DE LOS CESFAM CERCANOS
+
+cesfamCercanos.forEach(function(cesfam, indice) {
+
+    const marcador = L.marker(
+        [
+            cesfam.latitud,
+            cesfam.longitud
+        ]
+    ).addTo(mapa);
+
+    marcador.bindPopup(`
+        <strong>${indice + 1}. ${cesfam.nombre}</strong>
+        <br>
+        ${cesfam.via || ""} ${cesfam.direccion || ""} ${cesfam.numero || ""}
+        <br>
+        Comuna: ${cesfam.comuna || "Sin información"}
+        <br>
+        Distancia: ${cesfam.distancia} km
+    `);
+
+});
+
+{% if ubicacion_usuario %}
+
+const puntosCercanos = [
+    [
+        {{ ubicacion_usuario.latitud }},
+        {{ ubicacion_usuario.longitud }}
+    ]
+];
+
+cesfamCercanos.forEach(function(cesfam) {
+
+    puntosCercanos.push(
+        [
+            cesfam.latitud,
+            cesfam.longitud
+        ]
+    );
+
+});
+
+mapa.fitBounds(
+    puntosCercanos,
+    {
+        padding: [40, 40]
+    }
+);
+
+let lineaSeleccionada = null;
+
+const botonesCesfam = document.querySelectorAll(
+    ".seleccionar-cesfam"
+);
+
+const botonGoogleCesfam = document.getElementById(
+    "boton-google-cesfam"
+);
+
+botonesCesfam.forEach(function(boton) {
+
+    boton.addEventListener("click", function() {
+        console.log("CESFAM seleccionado");
+
+        const tarjeta = boton.closest(".cesfam-item");
+
+        const latitud = parseFloat(
+            tarjeta.dataset.latitud
+        );
+
+        const longitud = parseFloat(
+            tarjeta.dataset.longitud
+        );
+
+        botonGoogleCesfam.href =
+            `https://www.google.com/maps/dir/?api=1&origin=${ubicacionUsuario[0]},${ubicacionUsuario[1]}&destination=${latitud},${longitud}`;
+
+        botonGoogleCesfam.style.display = "inline-block";
+
+        const nombre = tarjeta.dataset.nombre;
+
+       
+        if (lineaSeleccionada) {
+            mapa.removeLayer(lineaSeleccionada);
+        }
+
+        lineaSeleccionada = L.polyline(
+            [
+                ubicacionUsuario,
+                [latitud, longitud]
+            ],
+            {
+                weight: 5,
+                opacity: 0.8
+            }
+        ).addTo(mapa);
+
+        mapa.fitBounds(
+            [
+                ubicacionUsuario,
+                [latitud, longitud]
+            ],
+            {
+                padding: [40, 40]
+            }
+        );
+
+
+
+    });
+
+});
+
+{% endif %}
+
 </script>
 
 {% endblock %}
-
-

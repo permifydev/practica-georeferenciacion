@@ -59,9 +59,14 @@ if (mapaElemento) {
 
     const mapa = L.map("mapa-ruta");
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "&copy; OpenStreetMap"
-    }).addTo(mapa);
+    L.tileLayer(
+        "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+            maxZoom: 19,
+            attribution:
+                '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }
+    ).addTo(mapa);
 
     const marcadorOrigen = L.marker([
         origenLat,
@@ -91,3 +96,5 @@ if (mapaElemento) {
         padding: [40, 40]
     });
 }
+
+
