@@ -41,3 +41,16 @@ def home_view(request):
 def logout_view(request):
     logout(request)
     return redirect("/login/")
+
+#Esta función sirve como puerta de entrada al panel de aplicaciones, dependiendo de la sección que el usuario eligió.
+
+@login_required
+def aplicaciones_home(request, seccion):
+
+    return render(
+        request,
+        "accounts/aplicaciones_home.html",
+        {
+            "seccion": seccion
+        }
+    )

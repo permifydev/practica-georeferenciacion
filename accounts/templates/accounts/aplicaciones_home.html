@@ -1,0 +1,108 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Aplicaciones</title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'accounts/css/panel_usuario.css' %}"
+    >
+</head>
+
+<body>
+
+    <main class="panel-container">
+
+        <section class="panel-card">
+
+            {% if seccion == "cartografia" %}
+
+                <h1>Aplicaciones de Cartografía</h1>
+
+                <p class="descripcion">
+                    Selecciona la aplicación que deseas utilizar.
+                </p>
+
+                <div class="panel-opciones">
+
+                    <a
+                        href="/mapa/consulta/"
+                        class="btn"
+                    >
+                        Consulta cartográfica
+                    </a>
+
+                    <a
+                        href="/mapa/ruta/"
+                        class="btn"
+                    >
+                        Calcular distancia
+                    </a>
+
+                    <a
+                        href="/cesfam/"
+                        class="btn"
+                    >
+                        Búsqueda de CESFAM
+                    </a>
+
+                </div>
+
+            {% elif seccion == "electromovilidad" %}
+
+                <h1>Aplicaciones de Electromovilidad</h1>
+
+                <p class="descripcion">
+                    Selecciona la aplicación que deseas utilizar.
+                </p>
+
+                <div class="panel-opciones">
+
+                    <a
+                        href="{% url 'electromovilidad:vehiculos_electricos' %}"
+                        class="btn"
+                    >
+                        Vehículos eléctricos
+                    </a>
+
+                </div>
+
+            {% else %}
+
+                <h1>Sección no disponible</h1>
+
+            {% endif %}
+
+
+            <div class="panel-opciones">
+
+                <a
+                    href="{% url 'accounts:home' %}"
+                    class="btn"
+                >
+                    Volver al panel principal
+                </a>
+
+                <a
+                    href="{% url 'accounts:logout' %}"
+                    class="btn btn-logout"
+                >
+                    Cerrar sesión
+                </a>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+
+</html>

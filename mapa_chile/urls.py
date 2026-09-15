@@ -22,4 +22,5 @@ urlpatterns = [
     path("", include("accounts.urls")),
     path("mapa/", include("mapa.urls")),
     path("cesfam/", include("cesfam.urls")),
+    path("electromovilidad/", include("electromovilidad.urls")),
 ]

@@ -1,0 +1,79 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {% block title %}
+            Electromovilidad
+        {% endblock %}
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'electromovilidad/css/base.css' %}"
+    >
+
+    {% block extra_css %}
+    {% endblock %}
+
+</head>
+
+<body>
+
+    <div class="layout">
+
+        <aside class="sidebar">
+
+            <h2>
+                Electromovilidad
+            </h2>
+
+            <nav>
+
+                <a href="{% url 'accounts:home' %}">
+                    Inicio
+                </a>
+
+                <a href="{% url 'electromovilidad:vehiculos_electricos' %}">
+                    Vehículos eléctricos
+                </a>
+
+                <a href="{% url 'accounts:aplicaciones_home' 'electromovilidad' %}">
+                    Aplicaciones
+                </a>
+
+                <a href="{% url 'accounts:logout' %}">
+                    Cerrar sesión
+                </a>
+
+            </nav>
+
+        </aside>
+
+
+        <main class="contenido">
+
+            {% block contenido %}
+            {% endblock %}
+
+        </main>
+
+    </div>
+
+
+    {% block extra_js %}
+    {% endblock %}
+
+</body>
+
+</html>

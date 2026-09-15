@@ -65,7 +65,33 @@ def cesfam_view(request):
             ""
         ).strip()
 
-        if direccion:
+        latitud_post = request.POST.get(
+            "latitud_usuario"
+        )
+
+        longitud_post = request.POST.get(
+            "longitud_usuario"
+        )
+
+        latitud_usuario = None
+        longitud_usuario = None
+
+        if latitud_post and longitud_post:
+
+            latitud_usuario = float(
+                latitud_post
+            )
+
+            longitud_usuario = float(
+                longitud_post
+            )
+
+            ubicacion_usuario = {
+                "latitud": latitud_usuario,
+                "longitud": longitud_usuario
+            }
+
+        elif direccion:
 
             url = "https://nominatim.openstreetmap.org/search"
 
@@ -104,62 +130,72 @@ def cesfam_view(request):
                     "longitud": longitud_usuario
                 }
 
-                for establecimiento in datos["features"]:
-
-                    propiedades = establecimiento["properties"]
-
-                    latitud_cesfam = propiedades.get("latitud")
-                    longitud_cesfam = propiedades.get("longitud")
-
-                    if (
-                        latitud_cesfam is not None
-                        and longitud_cesfam is not None
-                    ):
-
-                        distancia = calcular_distancia(
-                            latitud_usuario,
-                            longitud_usuario,
-                            float(latitud_cesfam),
-                            float(longitud_cesfam)
-                        )
-
-                        cesfam_cercanos.append({
-                            "nombre": propiedades.get("nombre"),
-                            "via": propiedades.get("via"),
-                            "direccion": propiedades.get("direccion"),
-                            "numero": propiedades.get("numero"),
-                            "comuna": propiedades.get("nom_comuna"),
-                            "fono": propiedades.get("fono"),
-                            "latitud": float(latitud_cesfam),
-                            "longitud": float(longitud_cesfam),
-                            "distancia": round(distancia, 2)
-                        })
-
-                cesfam_cercanos.sort(
-                    key=lambda cesfam: cesfam["distancia"]
-                )
-
-                cesfam_cercanos = cesfam_cercanos[:3]
-
             else:
 
                 error = "No se encontró la dirección ingresada."
 
+        if (
+            latitud_usuario is not None
+            and longitud_usuario is not None
+        ):
+
+            for establecimiento in datos["features"]:
+
+                propiedades = establecimiento["properties"]
+
+                latitud_cesfam = propiedades.get(
+                    "latitud"
+                )
+
+                longitud_cesfam = propiedades.get(
+                    "longitud"
+                )
+
+                if (
+                    latitud_cesfam is not None
+                    and longitud_cesfam is not None
+                ):
+
+                    distancia = calcular_distancia(
+                        latitud_usuario,
+                        longitud_usuario,
+                        float(latitud_cesfam),
+                        float(longitud_cesfam)
+                    )
+
+                    cesfam_cercanos.append({
+                        "nombre": propiedades.get("nombre"),
+                        "via": propiedades.get("via"),
+                        "direccion": propiedades.get("direccion"),
+                        "numero": propiedades.get("numero"),
+                        "comuna": propiedades.get("nom_comuna"),
+                        "fono": propiedades.get("fono"),
+                        "latitud": float(latitud_cesfam),
+                        "longitud": float(longitud_cesfam),
+                        "distancia": round(distancia, 2)
+                    })
+
+            cesfam_cercanos.sort(
+                key=lambda cesfam: cesfam["distancia"]
+            )
+
+            cesfam_cercanos = cesfam_cercanos[:3]
+
     return render(
-    request,
-    "cesfam/cesfam.html",
-    {
-        "cesfam_geojson": json.dumps(
-            datos,
-            ensure_ascii=False
-        ),
-        "direccion": direccion,
-        "ubicacion_usuario": ubicacion_usuario,
-        "cesfam_cercanos": cesfam_cercanos,
-        "cesfam_cercanos_json": json.dumps(
-            cesfam_cercanos,
-            ensure_ascii=False
-        ),
-        "error": error
-    }
-)
+        request,
+        "cesfam/cesfam.html",
+        {
+            "cesfam_geojson": json.dumps(
+                datos,
+                ensure_ascii=False
+            ),
+            "direccion": direccion,
+            "ubicacion_usuario": ubicacion_usuario,
+            "cesfam_cercanos": cesfam_cercanos,
+            "cesfam_cercanos_json": json.dumps(
+                cesfam_cercanos,
+                ensure_ascii=False
+            ),
+            "error": error
+        }
+    )

@@ -36,19 +36,30 @@ Búsqueda de CESFAM
 
         {% csrf_token %}
 
+        <input
+            type="hidden"
+            id="latitud-usuario"
+            name="latitud_usuario"
+        >
+
+        <input
+            type="hidden"
+            id="longitud-usuario"
+            name="longitud_usuario"
+        >
+
         <div class="grupo">
 
             <label for="direccion">
                 Dirección
             </label>
 
-            <input
+           <input
                 type="text"
                 id="direccion"
                 name="direccion"
                 value="{{ direccion }}"
                 placeholder="Ej: Av. Nueva Providencia 1363"
-                required
             >
 
         </div>
@@ -58,6 +69,14 @@ Búsqueda de CESFAM
             class="boton"
         >
             Buscar CESFAM
+        </button>
+
+        <button
+            type="button"
+            id="usar-ubicacion"
+            class="boton"
+        >
+            Usar mi ubicación actual
         </button>
 
     </form>
@@ -399,7 +418,55 @@ botonesCesfam.forEach(function(boton) {
 
 });
 
+
+
 {% endif %}
+
+const botonUbicacion = document.getElementById(
+    "usar-ubicacion"
+);
+
+const campoLatitud = document.getElementById(
+    "latitud-usuario"
+);
+
+const campoLongitud = document.getElementById(
+    "longitud-usuario"
+);
+
+const formularioCesfam = document.querySelector(
+    "form"  
+);
+
+botonUbicacion.addEventListener(
+    "click",
+    function() {
+
+        obtenerUbicacionActual(
+            function(latitud, longitud) {
+
+                campoLatitud.value = latitud;
+                campoLongitud.value = longitud;
+
+                formularioCesfam.submit();
+            },
+
+            function(error) {
+
+                console.error(
+                    "Error al obtener ubicación:",
+                    error
+                );
+
+                alert(
+                    "No fue posible obtener tu ubicación actual."
+                );
+            }
+        );
+
+    }
+);
+
 
 </script>
 

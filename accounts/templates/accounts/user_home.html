@@ -1,6 +1,3 @@
-
-
-
 {% load static %}
 
 <!DOCTYPE html>
@@ -9,13 +6,14 @@
 <head>
     <meta charset="UTF-8">
 
-    <!-- IMPORTANTE PARA QUE SEA RESPONSIVE EN CELULAR -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Panel Usuario</title>
 
-    <!-- CSS DEL PANEL -->
-    <link rel="stylesheet" href="{% static 'accounts/css/panel_usuario.css' %}">
+    <link
+        rel="stylesheet"
+        href="{% static 'accounts/css/panel_usuario.css' %}"
+    >
 </head>
 
 <body>
@@ -27,28 +25,66 @@
             <h1>Panel Usuario</h1>
 
             <p class="bienvenida">
-                Bienvenido <strong>{{ request.user.username }}</strong>
+                Bienvenido
+                <strong>{{ request.user.username }}</strong>
             </p>
 
             <p class="descripcion">
-                Aquí realizaremos la consulta cartográfica.
+                Selecciona la sección que deseas utilizar.
             </p>
+
+            <div class="panel-secciones">
+
+                <a
+                    href="{% url 'accounts:aplicaciones_home' 'cartografia' %}"
+                    class="seccion-card"
+                >
+
+                    <h2>
+                        Cartografía
+                    </h2>
+
+                    <p>
+                        Consulta cartográfica, cálculo de distancias
+                        y búsqueda de CESFAM.
+                    </p>
+
+                    <span class="btn">
+                        Entrar
+                    </span>
+
+                </a>
+
+
+                <a
+                    href="{% url 'accounts:aplicaciones_home' 'electromovilidad' %}"
+                    class="seccion-card"
+                >
+
+                    <h2>
+                        Electromovilidad
+                    </h2>
+
+                    <p>
+                        Vehículos eléctricos, autonomía,
+                        batería y planificación de viajes.
+                    </p>
+
+                    <span class="btn">
+                        Entrar
+                    </span>
+
+                </a>
+
+            </div>
+
 
             <div class="panel-opciones">
 
-                <a href="/mapa/consulta/" class="btn">
-                    Ir a consulta cartográfica
-                </a>
-
-                <a href="/mapa/ruta/" class="btn">
-                    Calcular distancia entre dos direcciones
-                </a>
-
-                <a href="/cesfam/" class="btn">
-                    Búsqueda de CESFAM
-                </a>
-
-                <a href="/logout/" class="btn btn-logout">
+                <a
+                    href="/logout/"
+                    class="btn btn-logout"
+                >
                     Cerrar sesión
                 </a>
 
