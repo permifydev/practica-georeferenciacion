@@ -13,4 +13,10 @@ urlpatterns = [
         name="vehiculos_electricos"
     ),
 
+    path(
+        "calcular-viaje/",
+        views.calcular_viaje,
+        name="calcular_viaje"
+    ),
+
 ]

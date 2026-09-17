@@ -4,9 +4,13 @@
 <html lang="es">
 
 <head>
+
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Aplicaciones</title>
 
@@ -14,6 +18,7 @@
         rel="stylesheet"
         href="{% static 'accounts/css/panel_usuario.css' %}"
     >
+
 </head>
 
 <body>
@@ -24,7 +29,9 @@
 
             {% if seccion == "cartografia" %}
 
-                <h1>Aplicaciones de Cartografía</h1>
+                <h1>
+                    Aplicaciones de Cartografía
+                </h1>
 
                 <p class="descripcion">
                     Selecciona la aplicación que deseas utilizar.
@@ -55,9 +62,12 @@
 
                 </div>
 
+
             {% elif seccion == "electromovilidad" %}
 
-                <h1>Aplicaciones de Electromovilidad</h1>
+                <h1>
+                    Aplicaciones de Electromovilidad
+                </h1>
 
                 <p class="descripcion">
                     Selecciona la aplicación que deseas utilizar.
@@ -72,11 +82,21 @@
                         Vehículos eléctricos
                     </a>
 
+                    <a
+                        href="{% url 'electromovilidad:calcular_viaje' %}"
+                        class="btn"
+                    >
+                        Calcular viaje
+                    </a>
+
                 </div>
+
 
             {% else %}
 
-                <h1>Sección no disponible</h1>
+                <h1>
+                    Sección no disponible
+                </h1>
 
             {% endif %}
 

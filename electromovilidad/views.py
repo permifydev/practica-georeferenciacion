@@ -20,3 +20,21 @@ def vehiculos_electricos(request):
             "vehiculos": vehiculos
         }
     )
+
+
+@login_required
+def calcular_viaje(request):
+
+    vehiculos = VehiculoElectrico.objects.all().order_by(
+        "marca",
+        "modelo",
+        "version"
+    )
+
+    return render(
+        request,
+        "electromovilidad/calcular_viaje.html",
+        {
+            "vehiculos": vehiculos
+        }
+    )

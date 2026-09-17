@@ -1,4 +1,5 @@
 {% extends "electromovilidad/base.html" %}
+{% load static %}
 
 
 {% block title %}
@@ -8,212 +9,115 @@
 
 {% block contenido %}
 
-    <section class="panel-card">
+<section class="panel-card">
 
-        <h1>
-            Vehículos eléctricos
-        </h1>
+    <h1>
+        Vehículos eléctricos
+    </h1>
 
-        <p class="descripcion">
-            Selecciona un vehículo eléctrico para consultar
-            sus características.
-        </p>
-
-
-        <div class="grupo">
-
-            <label for="vehiculo">
-                Marca, modelo o versión
-            </label>
-
-            <input
-                type="text"
-                id="vehiculo"
-                name="vehiculo"
-                list="lista-vehiculos"
-                placeholder="Ej: Volvo EX30 CORE E40"
-            >
-
-            <datalist id="lista-vehiculos">
-
-                {% for vehiculo in vehiculos %}
-
-                    <option
-                        value="{{ vehiculo.marca }} {{ vehiculo.modelo }} {{ vehiculo.version }}"
-                    >
-
-                {% endfor %}
-
-            </datalist>
+    <p class="descripcion">
+        Selecciona un vehículo eléctrico para consultar
+        sus características.
+    </p>
 
 
-            <button
-                type="button"
-                id="boton-consultar"
-                class="btn"
-            >
-                Consultar
-            </button>
+    <div class="grupo">
 
-        </div>
+        <label for="vehiculo">
+            Marca, modelo o versión
+        </label>
 
-
-        <div
-            id="ficha-vehiculo"
-            class="tarjeta"
-            style="display: none;"
+        <input
+            type="text"
+            id="vehiculo"
+            name="vehiculo"
+            list="lista-vehiculos"
+            placeholder="Ej: Volvo EX30 CORE E40"
+            autocomplete="off"
         >
 
-            <h2>
-                Especificaciones del vehículo
-            </h2>
 
-            <p>
-                <strong>Marca:</strong>
-                <span id="ficha-marca"></span>
-            </p>
+        <datalist id="lista-vehiculos">
 
-            <p>
-                <strong>Modelo:</strong>
-                <span id="ficha-modelo"></span>
-            </p>
+            {% for vehiculo in vehiculos %}
 
-            <p>
-                <strong>Versión:</strong>
-                <span id="ficha-version"></span>
-            </p>
+                <option
+                    value="{{ vehiculo.marca }} {{ vehiculo.modelo }} {{ vehiculo.version }}"
+                    data-marca="{{ vehiculo.marca }}"
+                    data-modelo="{{ vehiculo.modelo }}"
+                    data-version="{{ vehiculo.version }}"
+                    data-bateria="{{ vehiculo.bateria_kwh }}"
+                    data-autonomia="{{ vehiculo.autonomia_km }}"
+                    data-carga="{% if vehiculo.detalle_carga %}{{ vehiculo.detalle_carga }}{% elif vehiculo.tiempo_carga_10_80_min %}Carga 10-80% en {{ vehiculo.tiempo_carga_10_80_min }} minutos{% else %}No informado{% endif %}"
+                ></option>
 
-            <p>
-                <strong>Batería:</strong>
-                <span id="ficha-bateria"></span>
-                kWh
-            </p>
+            {% endfor %}
 
-            <p>
-                <strong>Autonomía:</strong>
-                <span id="ficha-autonomia"></span>
-                km
-            </p>
+        </datalist>
 
-            <p>
-                <strong>Carga:</strong>
-                <span id="ficha-carga"></span>
-            </p>
 
-        </div>
+        <button
+            type="button"
+            id="boton-consultar"
+            class="btn"
+        >
+            Consultar
+        </button>
 
-    </section>
+    </div>
+
+
+    <div
+        id="ficha-vehiculo"
+        class="tarjeta"
+        hidden
+    >
+
+        <h2>
+            Especificaciones del vehículo
+        </h2>
+
+        <p>
+            <strong>Marca:</strong>
+            <span id="ficha-marca"></span>
+        </p>
+
+        <p>
+            <strong>Modelo:</strong>
+            <span id="ficha-modelo"></span>
+        </p>
+
+        <p>
+            <strong>Versión:</strong>
+            <span id="ficha-version"></span>
+        </p>
+
+        <p>
+            <strong>Batería:</strong>
+            <span id="ficha-bateria"></span> kWh
+        </p>
+
+        <p>
+            <strong>Autonomía:</strong>
+            <span id="ficha-autonomia"></span> km
+        </p>
+
+        <p>
+            <strong>Carga:</strong>
+            <span id="ficha-carga"></span>
+        </p>
+
+    </div>
+
+</section>
 
 {% endblock %}
 
 
 {% block extra_js %}
 
-<script>
-
-    const vehiculos = [
-
-        {% for vehiculo in vehiculos %}
-
-        {
-            nombre: "{{ vehiculo.marca|escapejs }} {{ vehiculo.modelo|escapejs }} {{ vehiculo.version|escapejs }}",
-            marca: "{{ vehiculo.marca|escapejs }}",
-            modelo: "{{ vehiculo.modelo|escapejs }}",
-            version: "{{ vehiculo.version|escapejs }}",
-            bateria: "{{ vehiculo.bateria_kwh }}",
-            autonomia: "{{ vehiculo.autonomia_km }}",
-            carga: "{% if vehiculo.detalle_carga %}{{ vehiculo.detalle_carga|escapejs }}{% elif vehiculo.tiempo_carga_10_80_min %}Carga 10-80% en {{ vehiculo.tiempo_carga_10_80_min }} minutos{% else %}No informado{% endif %}"
-        },
-
-        {% endfor %}
-
-    ];
-
-
-    const campoVehiculo = document.getElementById(
-        "vehiculo"
-    );
-
-
-    const botonConsultar = document.getElementById(
-        "boton-consultar"
-    );
-
-
-    const fichaVehiculo = document.getElementById(
-        "ficha-vehiculo"
-    );
-
-
-    botonConsultar.addEventListener(
-        "click",
-        function() {
-
-            const textoSeleccionado = campoVehiculo.value
-                .trim()
-                .replace(/\s+/g, " ")
-                .toLowerCase();
-
-
-            const vehiculoSeleccionado = vehiculos.find(
-                function(vehiculo) {
-
-                    const nombreVehiculo = vehiculo.nombre
-                        .trim()
-                        .replace(/\s+/g, " ")
-                        .toLowerCase();
-
-                    return nombreVehiculo === textoSeleccionado;
-                }
-            );
-
-
-            if (!vehiculoSeleccionado) {
-
-                fichaVehiculo.style.display = "none";
-
-                alert(
-                    "Selecciona un vehículo válido."
-                );
-
-                return;
-            }
-
-
-            document.getElementById(
-                "ficha-marca"
-            ).textContent = vehiculoSeleccionado.marca;
-
-
-            document.getElementById(
-                "ficha-modelo"
-            ).textContent = vehiculoSeleccionado.modelo;
-
-
-            document.getElementById(
-                "ficha-version"
-            ).textContent = vehiculoSeleccionado.version;
-
-
-            document.getElementById(
-                "ficha-bateria"
-            ).textContent = vehiculoSeleccionado.bateria;
-
-
-            document.getElementById(
-                "ficha-autonomia"
-            ).textContent = vehiculoSeleccionado.autonomia;
-
-
-            document.getElementById(
-                "ficha-carga"
-            ).textContent = vehiculoSeleccionado.carga;
-
-
-            fichaVehiculo.style.display = "block";
-        }
-    );
-
-</script>
+<script
+    src="{% static 'electromovilidad/js/vehiculos_electricos.js' %}"
+></script>
 
 {% endblock %}

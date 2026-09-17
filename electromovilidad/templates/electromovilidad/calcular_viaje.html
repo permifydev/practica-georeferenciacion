@@ -1,0 +1,108 @@
+{% extends "electromovilidad/base.html" %}
+
+
+{% block title %}
+    Calcular viaje
+{% endblock %}
+
+
+{% block contenido %}
+
+<section class="panel-card">
+
+    <h1>
+        Calcular viaje
+    </h1>
+
+    <p class="descripcion">
+        Selecciona un vehículo y las direcciones
+        para calcular los viajes posibles con una carga completa.
+    </p>
+
+
+    <div class="grupo">
+
+        <label for="vehiculo">
+            Marca, modelo o versión
+        </label>
+
+        <input
+            type="text"
+            id="vehiculo"
+            name="vehiculo"
+            list="lista-vehiculos"
+            placeholder="Ej: Volvo EX30 CORE E40"
+            autocomplete="off"
+        >
+
+        <datalist id="lista-vehiculos">
+
+            {% for vehiculo in vehiculos %}
+
+                <option
+                    value="{{ vehiculo.marca }} {{ vehiculo.modelo }} {{ vehiculo.version }}"
+                ></option>
+
+            {% endfor %}
+
+        </datalist>
+
+    </div>
+
+
+    <div class="grupo">
+
+        <label for="origen">
+            Dirección de origen
+        </label>
+
+        <input
+            type="text"
+            id="origen"
+            name="origen"
+            placeholder="Ingresa la dirección de origen"
+        >
+
+    </div>
+
+
+    <div class="grupo">
+
+        <label for="destino">
+            Dirección de destino
+        </label>
+
+        <input
+            type="text"
+            id="destino"
+            name="destino"
+            placeholder="Ingresa la dirección de destino"
+        >
+
+    </div>
+
+
+    <div class="tarjeta">
+
+        <h2>
+            Resultado del viaje
+        </h2>
+
+        <p>
+            Aquí se mostrará la distancia de ida y vuelta
+            y la cantidad de viajes posibles con una carga completa.
+        </p>
+
+    </div>
+
+
+    <button
+        type="button"
+        class="btn"
+    >
+        Calcular
+    </button>
+
+</section>
+
+{% endblock %}
