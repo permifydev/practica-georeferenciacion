@@ -1,108 +1,308 @@
 {% extends "electromovilidad/base.html" %}
+{% load static %}
 
 
 {% block title %}
     Calcular viaje
 {% endblock %}
 
+{% block extra_css %}
+
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+>
+
+<link
+    rel="stylesheet"
+    href="{% static 'electromovilidad/css/calcular_viaje.css' %}"
+>
+
+{% endblock %}
+
 
 {% block contenido %}
 
-<section class="panel-card">
+    <section class="panel-card">
 
-    <h1>
-        Calcular viaje
-    </h1>
+        <h1>
+            Calcular viaje
+        </h1>
 
-    <p class="descripcion">
-        Selecciona un vehículo y las direcciones
-        para calcular los viajes posibles con una carga completa.
-    </p>
-
-
-    <div class="grupo">
-
-        <label for="vehiculo">
-            Marca, modelo o versión
-        </label>
-
-        <input
-            type="text"
-            id="vehiculo"
-            name="vehiculo"
-            list="lista-vehiculos"
-            placeholder="Ej: Volvo EX30 CORE E40"
-            autocomplete="off"
-        >
-
-        <datalist id="lista-vehiculos">
-
-            {% for vehiculo in vehiculos %}
-
-                <option
-                    value="{{ vehiculo.marca }} {{ vehiculo.modelo }} {{ vehiculo.version }}"
-                ></option>
-
-            {% endfor %}
-
-        </datalist>
-
-    </div>
-
-
-    <div class="grupo">
-
-        <label for="origen">
-            Dirección de origen
-        </label>
-
-        <input
-            type="text"
-            id="origen"
-            name="origen"
-            placeholder="Ingresa la dirección de origen"
-        >
-
-    </div>
-
-
-    <div class="grupo">
-
-        <label for="destino">
-            Dirección de destino
-        </label>
-
-        <input
-            type="text"
-            id="destino"
-            name="destino"
-            placeholder="Ingresa la dirección de destino"
-        >
-
-    </div>
-
-
-    <div class="tarjeta">
-
-        <h2>
-            Resultado del viaje
-        </h2>
-
-        <p>
-            Aquí se mostrará la distancia de ida y vuelta
-            y la cantidad de viajes posibles con una carga completa.
+        <p class="descripcion">
+            Selecciona un vehículo e ingresa el origen y destino
+            para calcular la distancia del viaje.
         </p>
 
-    </div>
+
+        <form
+            method="POST"
+            id="formulario-viaje"
+        >
+
+            {% csrf_token %}
 
 
-    <button
-        type="button"
-        class="btn"
-    >
-        Calcular
-    </button>
+            <div class="grupo">
 
-</section>
+                <label for="vehiculo">
+                    Marca, modelo o versión
+                </label>
+
+                <input
+                    type="text"
+                    id="vehiculo"
+                    list="lista-vehiculos"
+                    placeholder="Ej: Volvo EX30 CORE E40"
+                    autocomplete="off"
+                    required
+                >
+
+
+                <input
+                    type="hidden"
+                    id="vehiculo-id"
+                    name="vehiculo_id"
+                >
+
+
+                <datalist id="lista-vehiculos">
+
+                    {% for vehiculo in vehiculos %}
+
+                        <option
+                            value="{{ vehiculo.marca }} {{ vehiculo.modelo }} {{ vehiculo.version }}"
+                            data-id="{{ vehiculo.id }}"
+                        ></option>
+
+                    {% endfor %}
+
+                </datalist>
+
+            </div>
+
+
+            <div class="grupo">
+
+                <label for="origen">
+                    Dirección de origen
+                </label>
+
+                <input
+                    type="text"
+                    id="origen"
+                    name="origen"
+                    placeholder="Ej: Plaza de Maipú, Santiago"
+                    required
+                >
+
+            </div>
+
+
+            <div class="grupo">
+
+                <label for="destino">
+                    Dirección de destino
+                </label>
+
+                <input
+                    type="text"
+                    id="destino"
+                    name="destino"
+                    placeholder="Ej: Plaza de Puente Alto, Santiago"
+                    required
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn"
+            >
+                Calcular
+            </button>
+
+        </form>
+
+
+        {% if error %}
+
+            <div class="tarjeta">
+
+                <strong>
+                    {{ error }}
+                </strong>
+
+            </div>
+
+        {% endif %}
+
+        <!--**********************************************-->    
+            <!--resultado del viaje--> 
+        <!--**********************************************--> 
+
+        {% if resultado %}
+            <P></P>
+            <div class="tarjeta">
+
+                <h2>
+                    Resultado del viaje
+                </h2>
+
+                <p>
+                    <strong>Vehículo:</strong>
+                    {{ resultado.vehiculo.marca }}
+                    {{ resultado.vehiculo.modelo }}
+                    {{ resultado.vehiculo.version }}
+                </p>
+
+                <p>
+                    <strong>Origen:</strong>
+                    {{ resultado.origen }}
+                </p>
+
+                <p>
+                    <strong>Destino:</strong>
+                    {{ resultado.destino }}
+                </p>
+
+                <p>
+                    <strong>Capacidad de batería:</strong>
+                    {{ resultado.vehiculo.bateria_kwh }} kWh
+                </p>
+
+                <p>
+                    <strong>Autonomía del vehículo:</strong>
+                    {{ resultado.vehiculo.autonomia_km }} km
+                </p>
+
+                <hr>
+                 
+                <p>     
+                    <strong>Distancia solo ida:</strong>
+                    {{ resultado.distancia_km }} km
+                </p>      
+                
+                <p>
+                    <strong>Distancia ida y vuelta:</strong>
+                    {{ resultado.distancia_ida_vuelta }} km
+                </p>
+
+                <hr>
+
+                <!--VIAJES POSIBLES SOLO DE IDA-------------------------------------------------->
+                <!--<p>
+                <p>
+                    <strong>Viajes posibles solo ida:</strong>
+                    {{ resultado.viajes_solo_ida }}
+                </p>
+                </p>-->
+
+                {% if resultado.puede_completar_ida %}
+
+                    <hr>
+
+                    <p>
+                        <strong>El vehiculo puede completar en viaje de ida.</strong>
+                    </p>
+
+                    <p>
+                        <strong>Batería estimada utilizada:</strong>
+                        {{ resultado.bateria_usada_ida }} %
+                    </p>
+
+                    <p>
+                        <strong>Autonomía estimada restante:</strong>
+                        {{ resultado.autonomia_restante }} km
+                    </p>
+
+                {% else %}
+                
+                    <hr>
+
+                    <p>
+                        <strong>El vehiculo no puede completar el viaje 
+                                con una sola carga 
+                        </strong>
+                    </p>
+
+                    <p>
+                        <strong>Autonomía disponible:</strong>
+                        {{  resultado.vehiculo.autonomia_km}} km
+                    </p>
+
+                    <p><strong>Distancia hasta el destino:</strong>
+                        {{resultado.distancia_km}} km
+                    </p>
+
+                    <p>
+                        <strong>Distancia faltante:</strong>
+                        {{resultado.distancia_faltante }} km
+                    </p>
+                
+                {% endif %}
+
+                <hr>
+
+                {% if resultado.puede_completar_ida_vuelta %}
+
+                    <p>
+                        <strong>Viajes completos ida y vuelta posibles:</strong>
+                        {{ resultado.viajes_ida_vuelta }}
+                    </p>
+
+                    <p>
+                        <strong>
+                            Batería estimada utilizada en un viaje ida y vuelta:
+                        </strong>
+                        {{ resultado.bateria_usada_ida_vuelta }} %
+                    </p>
+
+                {% else %}
+
+                    <p>
+                        <strong>
+                            El vehículo no puede completar un viaje
+                            de ida y vuelta con una sola carga.
+                        </strong>
+                    </p>
+
+                {% endif %}
+
+                {% if resultado.origen_lat and resultado.destino_lat %}
+
+                    <div
+                        id="mapa-viaje"
+                        data-origen-lat="{{ resultado.origen_lat }}"
+                        data-origen-lon="{{ resultado.origen_lon }}"
+                        data-destino-lat="{{ resultado.destino_lat }}"
+                        data-destino-lon="{{ resultado.destino_lon }}"
+                    ></div>
+
+                {% endif %}
+
+            </div> 
+            
+        {% endif %}    
+
+        <!--**********************************************-->    
+            <!--FIN resultado del viaje--> 
+        <!--**********************************************--> 
+
+    </section>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+></script>
+
+<script
+    src="{% static 'electromovilidad/js/calcular_viaje.js' %}"
+></script>
 
 {% endblock %}
