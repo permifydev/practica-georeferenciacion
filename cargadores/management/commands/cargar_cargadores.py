@@ -79,7 +79,7 @@ class Command(BaseCommand):
 
 
             cargador, creado = (
-                CargadorElectrico.objects.get_or_create(
+                CargadorElectrico.objects.update_or_create(
                     nombre=nombre,
                     direccion=direccion,
                     defaults={
