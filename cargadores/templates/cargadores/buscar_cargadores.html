@@ -1,0 +1,248 @@
+{% extends "electromovilidad/base.html" %}
+{% load static %}
+
+{% block title %}
+    Buscar cargadores
+{% endblock %}
+
+{% block extra_css %}
+
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+>
+
+<link
+    rel="stylesheet"
+    href="{% static 'cargadores/css/buscar_cargadores.css' %}"
+>
+
+{% endblock %}
+
+
+{% block contenido %}
+
+<section class="panel-card">
+
+    <h1>
+        Búsqueda de cargadores eléctricos
+    </h1>
+
+    <p class="descripcion">
+        Ingresa una dirección para encontrar
+        los 3 cargadores eléctricos más cercanos.
+    </p>
+
+
+    <form
+        method="POST"
+        id="formulario-cargadores"
+    >
+
+        {% csrf_token %}
+
+
+        <div class="grupo">
+
+            <label for="direccion">
+                Dirección
+            </label>
+
+            <input
+                type="text"
+                id="direccion"
+                name="direccion"
+                value="{{ direccion }}"
+                placeholder="Ej: Av. Nueva Providencia 1363, Providencia"
+            >
+
+        </div>
+
+
+        <input
+            type="hidden"
+            id="latitud"
+            name="latitud"
+        >
+
+        <input
+            type="hidden"
+            id="longitud"
+            name="longitud"
+        >
+
+
+        <button
+            type="submit"
+            class="btn"
+            id="boton-buscar"
+        >
+            Buscar cargadores
+        </button>
+
+
+        <button
+            type="button"
+            class="btn"
+            id="boton-ubicacion"
+        >
+            Usar mi ubicación actual
+        </button>
+
+    </form>
+
+
+    {% if error %}
+
+        <div class="tarjeta">
+
+            <p>
+                {{ error }}
+            </p>
+
+        </div>
+
+    {% endif %}
+
+
+    {% if cargadores_cercanos %}
+
+        <div class="tarjeta">
+
+            <h2>
+                Cargadores más cercanos
+            </h2>
+
+
+            {% for resultado in cargadores_cercanos %}
+
+                <div>
+
+                    <h3>
+                        {{ forloop.counter }}.
+                        {{ resultado.cargador.nombre }}
+                    </h3>
+
+
+                    <p>
+                        <strong>Dirección:</strong>
+                        {{ resultado.cargador.direccion }}
+                    </p>
+
+
+                    <p>
+                        <strong>Comuna:</strong>
+                        {{ resultado.cargador.comuna }}
+                    </p>
+
+
+                    <p>
+                        <strong>
+                            Distancia aproximada:
+                        </strong>
+
+                        {{ resultado.distancia }} km
+                    </p>
+
+
+                    {% if resultado.cargador.tipo_conector %}
+
+                        <p>
+                            <strong>Conector:</strong>
+
+                            {{ resultado.cargador.tipo_conector }}
+                        </p>
+
+                    {% endif %}
+
+
+                    {% if resultado.cargador.potencia_kw %}
+
+                        <p>
+                            <strong>Potencia:</strong>
+
+                            {{ resultado.cargador.potencia_kw }} kW
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+                <button
+                    type="button"
+                    class="btn boton-cargador"
+                    data-nombre="{{ resultado.cargador.nombre }}"
+                    data-lat="{{ resultado.cargador.latitud }}"
+                    data-lon="{{ resultado.cargador.longitud }}"
+                >
+                    Seleccionar cargador
+                </button>
+
+
+                {% if not forloop.last %}
+                    <hr>
+                {% endif %}
+
+            {% endfor %}
+
+        </div>
+
+
+        {% if coordenadas_usuario %}
+
+            <div
+                id="mapa-cargadores"
+                data-usuario-lat="{{ coordenadas_usuario.lat }}"
+                data-usuario-lon="{{ coordenadas_usuario.lon }}"
+            >
+
+                {% for resultado in cargadores_cercanos %}
+
+                    <div
+                        class="dato-cargador"
+                        data-nombre="{{ resultado.cargador.nombre }}"
+                        data-lat="{{ resultado.cargador.latitud }}"
+                        data-lon="{{ resultado.cargador.longitud }}"
+                        data-distancia="{{ resultado.distancia }}"
+                    >
+                    </div>
+
+                {% endfor %}
+
+                <a
+                    id="boton-google-maps"
+                    class="btn"
+                    href="#"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    hidden
+                >
+                    Ir con Google Maps
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    {% endif %}
+
+</section>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+></script>
+
+<script
+    src="{% static 'mapa/js/ubicacion.js' %}"
+></script>
+
+<script
+    src="{% static 'cargadores/js/buscar_cargadores.js' %}"
+></script>
+
+{% endblock %}
