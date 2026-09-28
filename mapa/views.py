@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from .spatial import buscar_manzana
 from django.conf import settings
+from concurrent.futures import ThreadPoolExecutor
 
 @login_required
 def consulta_view(request):
@@ -433,6 +434,10 @@ def consulta_view(request):
         }
     )
 
+#*****************************************************************************************
+#  FUNCION OBTENER COORDENADAS 
+#*****************************************************************************************
+
 def obtener_coordenadas(direccion):
 
     url = "https://nominatim.openstreetmap.org/search"
@@ -465,6 +470,184 @@ def obtener_coordenadas(direccion):
     return None
 
 
+#*******************************************************************
+# FIN FUNCION
+#*******************************************************************
+
+
+#*******************************************************************
+# FUNCION FORMATEAR DURATION
+#*******************************************************************
+
+def formatear_duracion(segundos):
+
+    minutos_totales = round(
+        segundos / 60
+    )
+
+    horas = minutos_totales // 60
+
+    minutos = minutos_totales % 60
+
+
+    if horas > 0 and minutos > 0:
+
+        return (
+            f"{horas} h "
+            f"{minutos} min"
+        )
+
+
+    if horas > 0:
+
+        return f"{horas} h"
+
+
+    return f"{minutos} min"
+
+#*******************************************************************
+# FIN FUNCION FORMATEAR DURATION
+#*******************************************************************
+
+#*******************************************************************
+# FUNCION OBTENER RUTA OSRM
+#*******************************************************************
+
+def obtener_ruta_osrm(
+    origen,
+    destino,
+    modo="auto"
+):
+
+    servidores = {
+
+        "auto":
+            "https://routing.openstreetmap.de/"
+            "routed-car/route/v1/driving",
+
+        "caminando":
+            "https://routing.openstreetmap.de/"
+            "routed-foot/route/v1/driving",
+
+        "bicicleta":
+            "https://routing.openstreetmap.de/"
+            "routed-bike/route/v1/driving",
+    }
+
+
+    servidor = servidores.get(
+        modo
+    )
+
+
+    if not servidor:
+
+        return None
+
+
+    coordenadas = (
+        f"{origen['lon']},"
+        f"{origen['lat']};"
+        f"{destino['lon']},"
+        f"{destino['lat']}"
+    )
+
+
+    url = (
+        f"{servidor}/"
+        f"{coordenadas}"
+    )
+
+
+    parametros = {
+
+        "overview": "false",
+
+        "steps": "false",
+    }
+
+
+    try:
+
+        respuesta = requests.get(
+            url,
+            params=parametros,
+            headers={
+                "User-Agent":
+                    "mapa_chile_app/1.0"
+            },
+            timeout=15
+        )
+
+
+        respuesta.raise_for_status()
+
+
+        datos = respuesta.json()
+
+
+        if (
+            datos.get("code") != "Ok"
+            or
+            not datos.get("routes")
+        ):
+
+            return None
+
+
+        ruta = datos["routes"][0]
+
+
+        distancia_km = (
+            ruta["distance"] / 1000
+        )
+
+        duracion_segundos = (
+            ruta["duration"]
+        )
+
+
+        return {
+
+            "distancia_km":
+                round(
+                    distancia_km,
+                    2
+                ),
+
+            "duracion_segundos":
+                round(
+                    duracion_segundos
+                ),
+
+            "duracion_texto":
+                formatear_duracion(
+                    duracion_segundos
+                ),
+        }
+
+
+    except (
+        requests.RequestException,
+        ValueError,
+        KeyError
+    ) as error:
+
+        print(
+            "ERROR OSRM:",
+            error
+        )
+
+        return None
+
+#*******************************************************************
+# FIN FUNCION OBTENER RUTA OSRM
+#*******************************************************************
+
+
+#*******************************************************************
+# FUNCION PARA CALCULAR RUTA 
+#*******************************************************************
 @login_required
 def ruta_view(request):
 
@@ -473,95 +656,204 @@ def ruta_view(request):
 
     if request.method == "POST":
 
-        origen = request.POST.get("origen")
-        destino = request.POST.get("destino")
+        origen = request.POST.get(
+            "origen"
+        )
 
-        url = "https://maps.googleapis.com/maps/api/distancematrix/json"
+        destino = request.POST.get(
+            "destino"
+        )
 
-        modos = {
-            "auto": "driving",
-            "caminando": "walking",
-            "bicicleta": "bicycling",
-        }
 
-        tiempos = {}
-        distancias = {}
-        origen_google = None
-        destino_google = None
+        # =========================================
+        # OBTENER COORDENADAS
+        # =========================================
 
-        for nombre, modo in modos.items():
+        coordenadas_origen = obtener_coordenadas(
+            f"{origen}, Chile"
+        )
 
-            params = {
-                "origins": origen,
-                "destinations": destino,
-                "mode": modo,
-                "language": "es",
-                "key": settings.GOOGLE_MAPS_API_KEY,
-            }
+        coordenadas_destino = obtener_coordenadas(
+            f"{destino}, Chile"
+        )
 
-            response = requests.get(
-                url,
-                params=params,
-                timeout=10
+
+        if (
+            not coordenadas_origen
+            or
+            not coordenadas_destino
+        ):
+
+            error = (
+                "No fue posible encontrar "
+                "una de las direcciones."
             )
 
-            datos = response.json()
+        else:
 
-            print(f"RESPUESTA GOOGLE {nombre}:", datos)
+            # =========================================
+            # CALCULAR RUTAS CON OSRM
+            # =========================================
 
-            if datos.get("status") == "OK":
+            with ThreadPoolExecutor(
+                max_workers=3
+            ) as executor:
 
-                elemento = datos["rows"][0]["elements"][0]
+                futuros = {
 
-                if elemento.get("status") == "OK":
+                    "auto":
+                        executor.submit(
+                            obtener_ruta_osrm,
+                            coordenadas_origen,
+                            coordenadas_destino,
+                            "auto"
+                        ),
 
-                    tiempos[nombre] = elemento["duration"]["text"]                   
-                    distancias[nombre] = elemento["distance"]["text"]          ##########################################################
+                    "caminando":
+                        executor.submit(
+                            obtener_ruta_osrm,
+                            coordenadas_origen,
+                            coordenadas_destino,
+                            "caminando"
+                        ),
 
-                    if origen_google is None:
-                        origen_google = datos["origin_addresses"][0]
+                    "bicicleta":
+                        executor.submit(
+                            obtener_ruta_osrm,
+                            coordenadas_origen,
+                            coordenadas_destino,
+                            "bicicleta"
+                        ),
+                }
 
-                    if destino_google is None:
-                        destino_google = datos["destination_addresses"][0]
 
-                else:
-                    tiempos[nombre] = "No disponible"
+                rutas = {
+
+                    nombre:
+                        futuro.result()
+
+                    for nombre, futuro
+                    in futuros.items()
+                }
+
+
+            ruta_auto = rutas[
+                "auto"
+            ]
+
+            ruta_caminando = rutas[
+                "caminando"
+            ]
+
+            ruta_bicicleta = rutas[
+                "bicicleta"
+            ]
+
+
+            if (
+                not ruta_auto
+                and
+                not ruta_caminando
+                and
+                not ruta_bicicleta
+            ):
+
+                error = (
+                    "No fue posible calcular "
+                    "la ruta."
+                )
 
             else:
-                tiempos[nombre] = "No disponible"
 
-        if origen_google and destino_google:
+                resultado = {
 
-            
+                    "origen":
+                        origen,
 
-            coordenadas_origen = obtener_coordenadas(origen_google)
-            coordenadas_destino = obtener_coordenadas(destino_google)
+                    "destino":
+                        destino,
 
-            resultado = {
-                "origen": origen_google,
-                "destino": destino_google,
-                "distancia_auto": distancias.get("auto"),
-                "distancia_caminando": distancias.get("caminando"),
-                "distancia_bicicleta": distancias.get("bicicleta"),
-                "auto": tiempos.get("auto"),
-                "caminando": tiempos.get("caminando"),
-                "bicicleta": tiempos.get("bicicleta"),
 
-                "origen_lat": coordenadas_origen["lat"] if coordenadas_origen else None,
-                "origen_lon": coordenadas_origen["lon"] if coordenadas_origen else None,
+                    # AUTO
 
-                "destino_lat": coordenadas_destino["lat"] if coordenadas_destino else None,
-                "destino_lon": coordenadas_destino["lon"] if coordenadas_destino else None,
-            }
-            
-        else:
-            error = "No fue posible calcular la ruta."
+                    "distancia_auto":
+                        (
+                            f"{ruta_auto['distancia_km']} km"
+                            if ruta_auto
+                            else "No disponible"
+                        ),
+
+                    "auto":
+                        (
+                            ruta_auto["duracion_texto"]
+                            if ruta_auto
+                            else "No disponible"
+                        ),
+
+
+                    # CAMINANDO
+
+                    "distancia_caminando":
+                        (
+                            f"{ruta_caminando['distancia_km']} km"
+                            if ruta_caminando
+                            else "No disponible"
+                        ),
+
+                    "caminando":
+                        (
+                            ruta_caminando["duracion_texto"]
+                            if ruta_caminando
+                            else "No disponible"
+                        ),
+
+
+                    # BICICLETA
+
+                    "distancia_bicicleta":
+                        (
+                            f"{ruta_bicicleta['distancia_km']} km"
+                            if ruta_bicicleta
+                            else "No disponible"
+                        ),
+
+                    "bicicleta":
+                        (
+                            ruta_bicicleta["duracion_texto"]
+                            if ruta_bicicleta
+                            else "No disponible"
+                        ),
+
+
+                    # COORDENADAS PARA EL MAPA
+
+                    "origen_lat":
+                        coordenadas_origen["lat"],
+
+                    "origen_lon":
+                        coordenadas_origen["lon"],
+
+                    "destino_lat":
+                        coordenadas_destino["lat"],
+
+                    "destino_lon":
+                        coordenadas_destino["lon"],
+                }
+
 
     return render(
         request,
         "mapa/ruta.html",
         {
-            "resultado": resultado,
-            "error": error,
+            "resultado":
+                resultado,
+
+            "error":
+                error,
         }
-    )  
+    )
+
+#*******************************************************************
+# FIN FUNCION CALCULAR RUTA 
+#*******************************************************************
+

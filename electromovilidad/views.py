@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
-from mapa.views import obtener_coordenadas
+from mapa.views import (obtener_coordenadas, obtener_ruta_osrm,)
 
 from .models import VehiculoElectrico
 
@@ -32,14 +32,19 @@ def vehiculos_electricos(request):
 @login_required
 def calcular_viaje(request):
 
-    vehiculos = VehiculoElectrico.objects.all().order_by(
-        "marca",
-        "modelo",
-        "version"
+    vehiculos = (
+        VehiculoElectrico.objects
+        .all()
+        .order_by(
+            "marca",
+            "modelo",
+            "version"
+        )
     )
 
     resultado = None
     error = None
+
 
     if request.method == "POST":
 
@@ -48,208 +53,287 @@ def calcular_viaje(request):
         )
 
         origen = request.POST.get(
-            "origen"
-        )
+            "origen",
+            ""
+        ).strip()
 
         destino = request.POST.get(
-            "destino"
-        )
+            "destino",
+            ""
+        ).strip()
 
-        if not vehiculo_id or not origen or not destino:
 
-            error = "Debes seleccionar un vehículo e ingresar origen y destino."
+        # =========================================
+        # VALIDAR DATOS
+        # =========================================
+
+        if (
+            not vehiculo_id
+            or not origen
+            or not destino
+        ):
+
+            error = (
+                "Debes seleccionar un vehículo "
+                "e ingresar origen y destino."
+            )
 
         else:
 
             try:
 
-                vehiculo = VehiculoElectrico.objects.get(
-                    id=vehiculo_id
+                vehiculo = (
+                    VehiculoElectrico.objects.get(
+                        id=vehiculo_id
+                    )
                 )
 
             except VehiculoElectrico.DoesNotExist:
 
                 vehiculo = None
-                error = "El vehículo seleccionado no existe."
+
+                error = (
+                    "El vehículo seleccionado "
+                    "no es válido."
+                )
 
 
             if vehiculo:
 
-                url = (
-                    "https://maps.googleapis.com/maps/api/"
-                    "distancematrix/json"
+                # =========================================
+                # OBTENER COORDENADAS
+                # =========================================
+
+                coordenadas_origen = (
+                    obtener_coordenadas(
+                        f"{origen}, Chile"
+                    )
                 )
 
-                params = {
-                    "origins": origen,
-                    "destinations": destino,
-                    "mode": "driving",
-                    "language": "es",
-                    "key": settings.GOOGLE_MAPS_API_KEY,
-                }
-
-                response = requests.get(
-                    url,
-                    params=params,
-                    timeout=10
+                coordenadas_destino = (
+                    obtener_coordenadas(
+                        f"{destino}, Chile"
+                    )
                 )
 
-                datos = response.json()
 
-                if datos.get("status") == "OK":
+                if (
+                    not coordenadas_origen
+                    or not coordenadas_destino
+                ):
 
-                    elemento = datos["rows"][0]["elements"][0]
+                    error = (
+                        "No fue posible encontrar "
+                        "una de las direcciones."
+                    )
 
-                    if elemento.get("status") == "OK":
+                else:
 
-                        distancia_texto = elemento["distance"]["text"]
+                    # =========================================
+                    # RUTA EN AUTO CON OSRM
+                    # =========================================
 
-                        distancia_metros = elemento["distance"]["value"]
+                    ruta = obtener_ruta_osrm(
+                        coordenadas_origen,
+                        coordenadas_destino,
+                        "auto"
+                    )
 
-                        distancia_km = distancia_metros / 1000
+
+                    if not ruta:
+
+                        error = (
+                            "No fue posible calcular "
+                            "la ruta."
+                        )
+
+                    else:
+
+                        distancia_km = float(
+                            ruta["distancia_km"]
+                        )
 
                         autonomia_km = float(
                             vehiculo.autonomia_km
                         )
 
+
+                        # =========================================
+                        # DISTANCIA IDA Y VUELTA
+                        # =========================================
+
                         distancia_ida_vuelta = (
                             distancia_km * 2
                         )
 
-                        puede_completar_ida = (
-                            autonomia_km >= distancia_km
-                        )
 
-                        puede_completar_ida_vuelta = (
-                            autonomia_km >= distancia_ida_vuelta
-                        )
+                        # =========================================
+                        # VIAJES IDA Y VUELTA
+                        # =========================================
 
-                        distancia_faltante = max(
-                            distancia_km - autonomia_km,
-                            0
-                        )
+                        if distancia_ida_vuelta > 0:
 
-                        autonomia_restante = max(
-                            autonomia_km - distancia_km,
-                            0
-                        )
+                            viajes_ida_vuelta = int(
+                                autonomia_km
+                                //
+                                distancia_ida_vuelta
+                            )
 
-                        # CALCULO CUANTAS IDAS *********************************************************************
+                        else:
 
-                        #viajes_solo_ida = int(
-                         #   autonomia_km // distancia_km
-                        #)
+                            viajes_ida_vuelta = 0
 
-                        viajes_ida_vuelta = int(
-                            autonomia_km // distancia_ida_vuelta
-                        )
+
+                        # =========================================
+                        # BATERÍA ESTIMADA
+                        # =========================================
 
                         bateria_usada_ida = (
-                            distancia_km / autonomia_km
+                            distancia_km
+                            /
+                            autonomia_km
                         ) * 100
+
 
                         bateria_usada_ida_vuelta = (
-                            distancia_ida_vuelta / autonomia_km
+                            distancia_ida_vuelta
+                            /
+                            autonomia_km
                         ) * 100
 
-                        coordenadas_origen = obtener_coordenadas(
-                            datos["origin_addresses"][0]
+
+                        # =========================================
+                        # VALIDAR AUTONOMÍA
+                        # =========================================
+
+                        puede_completar_ida = (
+                            autonomia_km
+                            >=
+                            distancia_km
                         )
 
-                        coordenadas_destino = obtener_coordenadas(
-                            datos["destination_addresses"][0]
+
+                        puede_completar_ida_vuelta = (
+                            autonomia_km
+                            >=
+                            distancia_ida_vuelta
                         )
 
+
+                        distancia_faltante = max(
+                            distancia_km
+                            -
+                            autonomia_km,
+                            0
+                        )
+
+
+                        autonomia_restante = max(
+                            autonomia_km
+                            -
+                            distancia_km,
+                            0
+                        )
+
+
+                        # =========================================
+                        # RESULTADO
+                        # =========================================
 
                         resultado = {
-                            "vehiculo": vehiculo,
 
-                            "origen": datos["origin_addresses"][0],
+                            "vehiculo":
+                                vehiculo,
 
-                            "destino": datos["destination_addresses"][0],
+                            "origen":
+                                origen,
 
-                            "distancia_texto": distancia_texto,
+                            "destino":
+                                destino,
 
-                            "distancia_km": round(
-                                distancia_km,
-                                2
-                            ),
+                            "distancia_km":
+                                round(
+                                    distancia_km,
+                                    2
+                                ),
 
-                            "puede_completar_ida": puede_completar_ida,
+                            "distancia_ida_vuelta":
+                                round(
+                                    distancia_ida_vuelta,
+                                    2
+                                ),
 
-                            "puede_completar_ida_vuelta": (
-                                puede_completar_ida_vuelta
-                            ),
+                            "viajes_ida_vuelta":
+                                viajes_ida_vuelta,
 
-                            "distancia_faltante": round(
-                                distancia_faltante,
-                                2
-                            ),
+                            "bateria_usada_ida":
+                                round(
+                                    bateria_usada_ida,
+                                    2
+                                ),
 
-                            "autonomia_restante": round(
-                                autonomia_restante,
-                                2
-                            ),
+                            "bateria_usada_ida_vuelta":
+                                round(
+                                    bateria_usada_ida_vuelta,
+                                    2
+                                ),
 
-                            "distancia_ida_vuelta": round(
-                                distancia_ida_vuelta,
-                                2
-                            ),
-                            #CALCULO DE VIAJES DE IDA *******************************************************
-                            #"viajes_solo_ida": viajes_solo_ida,
+                            "puede_completar_ida":
+                                puede_completar_ida,
 
-                            "viajes_ida_vuelta": viajes_ida_vuelta,
+                            "puede_completar_ida_vuelta":
+                                puede_completar_ida_vuelta,
 
-                            "bateria_usada_ida": round(
-                                bateria_usada_ida,
-                                2
-                            ),
+                            "distancia_faltante":
+                                round(
+                                    distancia_faltante,
+                                    2
+                                ),
 
-                            "bateria_usada_ida_vuelta": round(
-                                bateria_usada_ida_vuelta,
-                                2
-                            ),
+                            "autonomia_restante":
+                                round(
+                                    autonomia_restante,
+                                    2
+                                ),
 
-                            "origen_lat": (
-                                coordenadas_origen["lat"]
-                                if coordenadas_origen
-                                else None
-                            ),
+                            "origen_lat":
+                                coordenadas_origen[
+                                    "lat"
+                                ],
 
-                            "origen_lon": (
-                                coordenadas_origen["lon"]
-                                if coordenadas_origen
-                                else None
-                            ),
+                            "origen_lon":
+                                coordenadas_origen[
+                                    "lon"
+                                ],
 
-                            "destino_lat": (
-                                coordenadas_destino["lat"]
-                                if coordenadas_destino
-                                else None
-                            ),
+                            "destino_lat":
+                                coordenadas_destino[
+                                    "lat"
+                                ],
 
-                            "destino_lon": (
-                                coordenadas_destino["lon"]
-                                if coordenadas_destino
-                                else None
-                            ),
+                            "destino_lon":
+                                coordenadas_destino[
+                                    "lon"
+                                ],
+
+                            "duracion":
+                                ruta[
+                                    "duracion_texto"
+                                ],
                         }
-
-                    else:
-
-                        error = "No fue posible calcular la distancia."
-
-                else:
-
-                    error = "Error al consultar Google Maps."
 
 
     return render(
         request,
         "electromovilidad/calcular_viaje.html",
         {
-            "vehiculos": vehiculos,
-            "resultado": resultado,
-            "error": error
+            "vehiculos":
+                vehiculos,
+
+            "resultado":
+                resultado,
+
+            "error":
+                error,
         }
     )
