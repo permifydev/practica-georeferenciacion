@@ -18,9 +18,9 @@
         {% endblock %}
     </title>
 
-    <link
+   <link
         rel="stylesheet"
-        href="{% static 'electromovilidad/css/base.css' %}"
+        href="{% static 'electromovilidad/css/base.css' %}?v=2"
     >
 
     {% block extra_css %}
@@ -34,33 +34,88 @@
 
         <aside class="sidebar">
 
-            <h2>
-                Electromovilidad
-            </h2>
+            <div class="sidebar-header">
 
-            <nav>
+                <h2>
+                    Electromovilidad
+                </h2>
 
-                <a href="{% url 'accounts:home' %}">
-                    Inicio
+                <span>
+                    Panel de navegación
+                </span>
+
+            </div>
+
+
+            <nav class="menu">
+
+                <a
+                    href="{% url 'accounts:home' %}"
+                    class="{% if request.path == '/' %}activo{% endif %}"
+                >
+                    🏠 Inicio
                 </a>
 
-                <a href="{% url 'electromovilidad:vehiculos_electricos' %}">
+                <a
+                    href="{% url 'electromovilidad:vehiculos_electricos' %}"
+                    class="{% if '/electromovilidad/vehiculos/' in request.path %}activo{% endif %}"
+                >
                     Vehículos eléctricos
                 </a>
 
-                <a href="{% url 'electromovilidad:calcular_viaje' %}">
+                <a
+                    href="{% url 'electromovilidad:calcular_viaje' %}"
+                    class="{% if '/electromovilidad/calcular-viaje/' in request.path %}activo{% endif %}"
+                >
                     Calcular viaje
                 </a>
 
-                <a href="{% url 'accounts:aplicaciones_home' 'electromovilidad' %}">
+                <a
+                    href="{% url 'cargadores:buscar_cargadores' %}"
+                    class="{% if '/cargadores/' in request.path %}activo{% endif %}"
+                >
+                    Cargadores
+                </a>
+
+                <a
+                    href="{% url 'accounts:aplicaciones_home' 'electromovilidad' %}"
+                >
                     Aplicaciones
                 </a>
 
-                <a href="{% url 'accounts:logout' %}">
+            </nav>
+
+
+            <div class="sidebar-footer">
+
+                <div class="usuario-sidebar">
+
+                    <div class="usuario-icono">
+                        👤
+                    </div>
+
+                    <div class="usuario-info">
+
+                        <span class="usuario-label">
+                            Usuario
+                        </span>
+
+                        <strong>
+                            {{ request.user.username }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+                <a
+                    href="/logout/"
+                    class="cerrar-sesion"
+                >
                     Cerrar sesión
                 </a>
 
-            </nav>
+            </div>
 
         </aside>
 

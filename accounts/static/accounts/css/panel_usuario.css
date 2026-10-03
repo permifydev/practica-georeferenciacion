@@ -60,7 +60,8 @@ body {
 .panel-opciones {
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 05px;
+    margin-bottom: 05px;
 }
 
 .btn {
@@ -161,3 +162,28 @@ body {
         padding: 13px 12px;
     }
 }
+
+/* panel de usuario 1*/
+
+.panel-secciones {
+    display: flex;
+    flex-direction: column;
+   
+    margin-top: 10px;
+}
+
+.seccion-card {
+    display: block;
+    text-decoration: none;
+}
+
+.panel-secciones .seccion-card {
+    display: block;
+    margin-bottom: 10px;
+    text-decoration: none;
+}
+
+.panel-secciones .seccion-card:last-child {
+    margin-bottom: 0;
+}
+
