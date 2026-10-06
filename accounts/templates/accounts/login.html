@@ -1,164 +1,131 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
     <meta charset="UTF-8">
 
-    <!-- Importante para celulares -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <title>Iniciar sesión</title>
+    <title>Iniciar sesión | ADDRSS</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+    <link
+        rel="stylesheet"
+        href="{% static 'accounts/css/login.css' %}?v=2"
+    >
 
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f8;
-
-            min-height: 100vh;
-
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            padding: 20px;
-        }
-
-        .login-container {
-            width: 100%;
-            max-width: 420px;
-
-            background-color: white;
-
-            padding: 35px;
-
-            border-radius: 12px;
-
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
-        }
-
-        h1 {
-            text-align: center;
-            font-size: 28px;
-            margin-bottom: 25px;
-        }
-
-        h2 {
-            text-align: center;
-            font-size: 22px;
-            margin-bottom: 25px;
-        }
-
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 7px;
-            font-weight: bold;
-        }
-
-        input {
-            width: 100%;
-
-            padding: 12px;
-
-            border: 1px solid #ccc;
-            border-radius: 6px;
-
-            font-size: 16px;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: #555;
-        }
-
-        button {
-            width: 100%;
-
-            padding: 12px;
-
-            border: none;
-            border-radius: 6px;
-
-            background-color: #333;
-            color: white;
-
-            font-size: 16px;
-            font-weight: bold;
-
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #555;
-        }
-
-        /* Adaptación para celulares pequeños */
-        @media (max-width: 480px) {
-
-            .login-container {
-                padding: 25px 20px;
-            }
-
-            h1 {
-                font-size: 23px;
-            }
-
-            h2 {
-                font-size: 19px;
-            }
-        }
-    </style>
 </head>
 
 <body>
 
-    <div class="login-container">
+    <main class="login-page">
 
-        <h1>ANDDRSS</h1>
+        <section class="login-card">
 
-        <h2>Iniciar sesión</h2>
+            <!-- ============================= -->
+            <!-- LADO IZQUIERDO -->
+            <!-- ============================= -->
 
-        <form method="POST">
+            <div class="login-form-section">
 
-            {% csrf_token %}
+                <div class="login-logo">
 
-            <div class="form-group">
-                <label for="username">Usuario:</label>
+                    <img
+                        src="{% static 'accounts/img/addrss_logo.png' %}"
+                        alt="Logo ADDRSS"
+                    >
 
-                <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    required
-                >
+                </div>
+
+
+                <div class="login-header">
+
+                    <h1>
+                        Iniciar sesión
+                    </h1>
+
+                    <p>
+                        Accede a tu cuenta para continuar
+                    </p>
+
+                </div>
+
+
+                <form method="POST">
+
+                    {% csrf_token %}
+
+
+                    <div class="form-group">
+
+                        <label for="username">
+                            Usuario
+                        </label>
+
+                        <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            placeholder="Ingresa tu usuario"
+                            autocomplete="username"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="password">
+                            Contraseña
+                        </label>
+
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Ingresa tu contraseña"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="btn-login"
+                    >
+                        Ingresar
+                    </button>
+
+                </form>
+
             </div>
 
-            <div class="form-group">
-                <label for="password">Contraseña:</label>
 
-                <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    required
+            <!-- ============================= -->
+            <!-- LADO DERECHO -->
+            <!-- ============================= -->
+
+            <div class="login-image-section">
+
+                <img
+                    src="{% static 'accounts/img/login_mapa.png' %}"
+                    alt="Plataforma cartográfica ADDRSS"
                 >
+
             </div>
 
-            <button type="submit">
-                Ingresar
-            </button>
+        </section>
 
-        </form>
-
-    </div>
+    </main>
 
 </body>
+
 </html>

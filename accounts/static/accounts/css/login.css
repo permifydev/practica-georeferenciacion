@@ -1,0 +1,390 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef4fb,
+            #f8fafc
+        );
+
+    color: #0f2747;
+}
+
+
+/* =========================================
+   CONTENEDOR PRINCIPAL
+========================================= */
+
+.login-page {
+    min-height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 20px 24px;
+}
+
+
+/* =========================================
+   TARJETA
+========================================= */
+
+.login-card {
+    width: 100%;
+    max-width: 1000px;
+
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+
+    background-color: #ffffff;
+
+    border-radius: 24px;
+    overflow: hidden;
+
+    box-shadow:
+        0 20px 55px
+        rgba(15, 39, 71, 0.16);
+
+    border: 1px solid #e5e7eb;
+}
+
+
+/* =========================================
+   LADO IZQUIERDO
+========================================= */
+
+.login-form-section {
+    padding: 24px 36px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+
+/* =========================================
+   LOGO
+========================================= */
+
+.login-logo {
+    margin-bottom: 18px;
+}
+
+.login-logo img {
+    width: 100%;
+    max-width: 210px;
+    height: auto;
+
+    display: block;
+    margin: 0 auto;
+}
+
+
+/* =========================================
+   ENCABEZADO
+========================================= */
+
+.login-header {
+    margin-bottom: 22px;
+}
+
+.login-header h1 {
+    font-size: 30px;
+    line-height: 1.1;
+
+    color: #0f2747;
+
+    margin-bottom: 8px;
+}
+
+.login-header p {
+    font-size: 17px;
+    color: #64748b;
+}
+
+
+/* =========================================
+   FORMULARIO
+========================================= */
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+
+    margin-bottom: 9px;
+
+    font-size: 16px;
+    font-weight: 700;
+
+    color: #0f2747;
+}
+
+.form-group input {
+    width: 100%;
+
+    min-height: 48px;
+
+    padding: 11px 14px;
+
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+
+    background-color: #f8fbff;
+
+    color: #111827;
+
+    font-size: 16px;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.form-group input::placeholder {
+    color: #94a3b8;
+}
+
+.form-group input:focus {
+    outline: none;
+
+    border-color: #2563eb;
+
+    background-color: #ffffff;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(37, 99, 235, 0.12);
+}
+
+
+/* =========================================
+   BOTÓN
+========================================= */
+
+.btn-login {
+    width: 100%;
+
+    min-height: 48px;
+
+    border: none;
+    border-radius: 10px;
+    background-color: #2563eb;
+
+    /*background:
+        linear-gradient(
+            135deg,
+            #0f2747,
+            #145b8f
+        );*/
+
+    color: white;
+
+    font-size: 17px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.btn-login:hover {
+    background-color: #1d4ed8;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(37, 99, 235, 0.25);
+}
+
+.btn-login:active {
+    transform: translateY(0);
+}
+
+
+/* =========================================
+   LADO DERECHO
+========================================= */
+
+.login-image-section {
+    min-height: 430px;
+
+    background-color: #eaf4ff;
+
+    position: relative;
+    overflow: hidden;
+}
+
+.login-image-section img {
+    width: 100%;
+    height: 100%;
+
+    position: absolute;
+    inset: 0;
+
+    object-fit: cover;
+    object-position: 95% center;
+
+    display: block;
+}
+
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 900px) {
+
+    .login-page {
+        padding: 30px 20px;
+    }
+
+    .login-card {
+        grid-template-columns: 1fr 0.9fr;
+    }
+
+    .login-form-section {
+        padding: 45px 38px;
+    }
+
+    .login-logo {
+        margin-bottom: 30px;
+    }
+
+    .login-logo img {
+        max-width: 300px;
+    }
+
+    .login-header h1 {
+        font-size: 32px;
+    }
+
+    .login-image-section {
+        min-height: 600px;
+    }
+}
+
+
+/* =========================================
+   CELULAR
+========================================= */
+
+@media (max-width: 700px) {
+
+    .login-page {
+        align-items: flex-start;
+
+        padding: 20px 14px;
+    }
+
+    .login-card {
+        display: flex;
+        flex-direction: column;
+
+        width: 100%;
+        max-width: 900px;
+
+        border-radius: 18px;
+    }
+
+    .login-form-section {
+        padding: 35px 24px;
+    }
+
+    .login-logo {
+        margin-bottom: 28px;
+    }
+
+    .login-logo img {
+        max-width: 280px;
+
+        margin: 0 auto;
+    }
+
+    .login-header {
+        text-align: center;
+        margin-bottom: 28px;
+    }
+
+    .login-header h1 {
+        font-size: 30px;
+    }
+
+    .login-header p {
+        font-size: 15px;
+    }
+
+    .form-group input {
+        min-height: 52px;
+        font-size: 16px;
+    }
+
+    .btn-login {
+        min-height: 52px;
+    }
+
+    .login-image-section {
+        width: 100%;
+        min-height: 280px;
+    }
+
+    .login-image-section img {
+        position: absolute;
+
+        object-fit: cover;
+        object-position: center;
+    }
+}
+
+
+/* =========================================
+   CELULAR PEQUEÑO
+========================================= */
+
+@media (max-width: 420px) {
+
+    .login-page {
+        padding: 12px;
+    }
+
+    .login-form-section {
+        padding: 28px 18px;
+    }
+
+    .login-logo img {
+        max-width: 240px;
+    }
+
+    .login-header h1 {
+        font-size: 26px;
+    }
+
+    .login-header p {
+        font-size: 14px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .login-image-section {
+        min-height: 220px;
+    }
+}
